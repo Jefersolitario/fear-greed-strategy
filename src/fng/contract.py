@@ -114,6 +114,27 @@ def publish_strategy(root: str, manifest: dict, daily: pl.DataFrame, allow_resta
     write_json(_join(root, manifest["id"], "manifest.json"), manifest)
 
 
+def prune_removed(root: str, keep: list[str], allow_restate: bool = False) -> list[str]:
+    """Delete the folders of strategies that were published before and are no longer in the portfolio.
+
+    A strategy that already has paper or live days is only removed on purpose (--allow-restate):
+    dropping it takes a real record out of the published results.
+    """
+    raw = read_bytes(_join(root, "index.json"))
+    if raw is None:
+        return []
+    gone = [s for s in json.loads(raw).get("strategies", []) if s not in keep]
+    fs, path = fsspec.core.url_to_fs(root)
+    for sid in gone:
+        old = read_parquet(_join(root, sid, "daily.parquet"))
+        if old is not None and (old["mode"] != "backtest").any() and not allow_restate:
+            raise RuntimeError(f"{sid} has paper or live days; removing it needs --allow-restate")
+        folder = path.rstrip("/") + "/" + sid
+        if fs.exists(folder):
+            fs.rm(folder, recursive=True)
+    return gone
+
+
 def publish_index(root: str, source: str, strategy_ids: list[str], summary: pl.DataFrame, updated_utc: str, data_through: str) -> None:
     write_parquet(_join(root, "backtest_summary.parquet"), summary)
     write_json(_join(root, "index.json"), {"contract_version": CONTRACT_VERSION, "source": source, "strategies": strategy_ids,

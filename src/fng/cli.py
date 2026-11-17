@@ -108,6 +108,8 @@ def main(argv: list[str] | None = None) -> int:
                     "backtest_start": cfg["backtest_start"], "paper_start": cfg["paper_start"], "description": r.get("description", ""),
                     "ticket_usd": TICKET, "code_version": version, "source_repo": cfg["source"]}
         contract.publish_strategy(a.out, manifest, daily[rule.id], allow_restate=a.allow_restate)
+    for sid in contract.prune_removed(a.out, list(daily), allow_restate=a.allow_restate):
+        print(f"{sid}: no longer in the portfolio, published files removed")
     contract.publish_index(a.out, cfg["source"], list(daily), summary,
                            updated_utc=dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), data_through=str(inputs["date"].max()))
     with pl.Config(tbl_rows=20, tbl_cols=12, float_precision=2):

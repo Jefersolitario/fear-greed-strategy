@@ -1,4 +1,5 @@
 # Every [[strategy]] is tested in the backtest. Those with paper = true are paper traded and published.
+# 17 Nov 2026: the portfolio keeps only fng10_sell80. The hold rules stay here as tested variants.
 source = "fear-greed-strategy"
 backtest_start = "2018-02-01"   # first day of the Fear & Greed index
 paper_start = "2026-11-18"      # paper books start flat on this UTC day; the rules were committed before it
@@ -7,7 +8,6 @@ paper_start = "2026-11-18"      # paper books start flat on this UTC day; the ru
 id = "fng10_hold"
 name = "F&G under 10, hold"
 threshold = 10
-paper = true
 description = "Buy 1,000 USD of BTC at the UTC close of every day the Crypto Fear & Greed index is below 10. Never sell."
 
 [[strategy]]
@@ -15,7 +15,6 @@ id = "fng20_below_2y_avg"
 name = "F&G under 20, price below 2-year average"
 threshold = 20
 price_filter = "below_ma730"
-paper = true
 description = "Buy 1,000 USD of BTC at the UTC close of every day the index is below 20, provided the previous close was below its 730-day average. Never sell."
 
 [[strategy]]

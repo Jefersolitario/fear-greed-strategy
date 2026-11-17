@@ -54,7 +54,7 @@ def test_headline_ratios(built):
 
 def test_daily_tables_follow_contract(built):
     _, _, daily, summary = built
-    assert set(daily) == {"fng10_hold", "fng20_below_2y_avg", "fng10_sell80"}
+    assert set(daily) == {"fng10_sell80"}                                         # the only rule in the portfolio
     for sid, t in daily.items():
         t = contract.validate_daily(t)
         assert t["pnl"].sum() == pytest.approx(summary[sid]["pnl"], abs=0.01)     # daily PnL adds up to the total
@@ -92,7 +92,7 @@ def test_paper_book_starts_flat_and_history_is_append_only(built, tmp_path):
     # ten more days with the index at 5 and a flat price: paper buys from paper_start only
     longer = _extend(inputs, 10, fng=5, close=60_000.0)
     second, _ = cli.build(longer, cfg)
-    t = second["fng10_hold"]
+    t = second["fng10_sell80"]
     paper = t.filter(pl.col("mode") == "paper")
     assert paper["date"].min() == cfg["paper_start"]
     n_paper_days = (longer["date"].max() - cfg["paper_start"]).days + 1
@@ -102,9 +102,9 @@ def test_paper_book_starts_flat_and_history_is_append_only(built, tmp_path):
         contract.publish_strategy(out, _manifest(sid), tab)           # only adds days: allowed
 
     # rewriting a published day is refused
-    tampered = second["fng10_hold"].with_columns(pl.when(pl.col("date") == cfg["paper_start"]).then(pl.col("pnl") + 50).otherwise(pl.col("pnl")).alias("pnl"))
+    tampered = second["fng10_sell80"].with_columns(pl.when(pl.col("date") == cfg["paper_start"]).then(pl.col("pnl") + 50).otherwise(pl.col("pnl")).alias("pnl"))
     with pytest.raises(RuntimeError, match="would change"):
-        contract.publish_strategy(out, _manifest("fng10_hold"), tampered)
+        contract.publish_strategy(out, _manifest("fng10_sell80"), tampered)
 
 
 def _manifest(sid: str) -> dict:
@@ -169,3 +169,20 @@ def test_sell_at_80_paper_book_sells_everything_and_goes_flat(built):
 
 def test_code_fingerprint_is_stable():
     assert cli.code_version() == cli.code_version() and len(cli.code_version()) == 10
+
+
+def test_dropping_a_strategy_removes_its_files_but_never_a_paper_record(built, tmp_path):
+    cfg, inputs, daily, _ = built
+    out = str(tmp_path / "results")
+    t = daily["fng10_sell80"]
+    for sid in ("old_rule", "fng10_sell80"):
+        contract.publish_strategy(out, _manifest(sid), t)
+    contract.publish_index(out, "test", ["old_rule", "fng10_sell80"], pl.DataFrame({"strategy_id": ["x"]}), "now", "2026-11-14")
+    assert contract.prune_removed(out, ["fng10_sell80"]) == ["old_rule"]
+    assert not (tmp_path / "results" / "old_rule").exists() and (tmp_path / "results" / "fng10_sell80" / "daily.parquet").exists()
+
+    live = t.with_columns(pl.when(pl.col("date") == t["date"].max()).then(pl.lit("paper")).otherwise(pl.col("mode")).alias("mode"))
+    contract.publish_strategy(out, _manifest("old_rule"), live)
+    contract.publish_index(out, "test", ["old_rule", "fng10_sell80"], pl.DataFrame({"strategy_id": ["x"]}), "now", "2026-11-14")
+    with pytest.raises(RuntimeError, match="paper or live days"):
+        contract.prune_removed(out, ["fng10_sell80"])
