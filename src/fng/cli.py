@@ -8,8 +8,8 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import hashlib
 import pathlib
-import subprocess
 import tomllib
 
 import numpy as np
@@ -32,10 +32,12 @@ def load_config(path: pathlib.Path) -> dict:
 
 
 def code_version() -> str:
-    try:
-        return subprocess.run(["git", "-C", str(ROOT), "rev-parse", "--short", "HEAD"], capture_output=True, text=True, check=True).stdout.strip()
-    except Exception:  # noqa: BLE001
-        return "unknown"
+    """Fingerprint of the rules and the code. It moves only when they change, not when data or results are committed,
+    and it does not depend on git history being present (CI checks out a single commit)."""
+    h = hashlib.sha1()
+    for f in sorted([*ROOT.glob("src/fng/*.py"), ROOT / "strategies.toml"]):
+        h.update(f.name.encode() + b"\0" + f.read_bytes())
+    return h.hexdigest()[:10]
 
 
 def daily_rows(dates: list[dt.date], sim: dict[str, np.ndarray], mode: str, keep: np.ndarray) -> pl.DataFrame:
@@ -106,6 +108,8 @@ def main(argv: list[str] | None = None) -> int:
                     "backtest_start": cfg["backtest_start"], "paper_start": cfg["paper_start"], "description": r.get("description", ""),
                     "ticket_usd": TICKET, "code_version": version, "source_repo": cfg["source"]}
         contract.publish_strategy(a.out, manifest, daily[rule.id], allow_restate=a.allow_restate)
+    for sid in contract.prune_removed(a.out, list(daily), allow_restate=a.allow_restate):
+        print(f"{sid}: no longer in the portfolio, published files removed")
     contract.publish_index(a.out, cfg["source"], list(daily), summary,
                            updated_utc=dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), data_through=str(inputs["date"].max()))
     with pl.Config(tbl_rows=20, tbl_cols=12, float_precision=2):

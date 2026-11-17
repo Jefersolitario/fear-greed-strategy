@@ -54,7 +54,7 @@ def test_headline_ratios(built):
 
 def test_daily_tables_follow_contract(built):
     _, _, daily, summary = built
-    assert set(daily) == {"fng10_hold", "fng20_below_2y_avg"}
+    assert set(daily) == {"fng10_sell80"}                                         # the only rule in the portfolio
     for sid, t in daily.items():
         t = contract.validate_daily(t)
         assert t["pnl"].sum() == pytest.approx(summary[sid]["pnl"], abs=0.01)     # daily PnL adds up to the total
@@ -92,7 +92,7 @@ def test_paper_book_starts_flat_and_history_is_append_only(built, tmp_path):
     # ten more days with the index at 5 and a flat price: paper buys from paper_start only
     longer = _extend(inputs, 10, fng=5, close=60_000.0)
     second, _ = cli.build(longer, cfg)
-    t = second["fng10_hold"]
+    t = second["fng10_sell80"]
     paper = t.filter(pl.col("mode") == "paper")
     assert paper["date"].min() == cfg["paper_start"]
     n_paper_days = (longer["date"].max() - cfg["paper_start"]).days + 1
@@ -102,9 +102,9 @@ def test_paper_book_starts_flat_and_history_is_append_only(built, tmp_path):
         contract.publish_strategy(out, _manifest(sid), tab)           # only adds days: allowed
 
     # rewriting a published day is refused
-    tampered = second["fng10_hold"].with_columns(pl.when(pl.col("date") == cfg["paper_start"]).then(pl.col("pnl") + 50).otherwise(pl.col("pnl")).alias("pnl"))
+    tampered = second["fng10_sell80"].with_columns(pl.when(pl.col("date") == cfg["paper_start"]).then(pl.col("pnl") + 50).otherwise(pl.col("pnl")).alias("pnl"))
     with pytest.raises(RuntimeError, match="would change"):
-        contract.publish_strategy(out, _manifest("fng10_hold"), tampered)
+        contract.publish_strategy(out, _manifest("fng10_sell80"), tampered)
 
 
 def _manifest(sid: str) -> dict:
@@ -154,3 +154,35 @@ def test_live_update_appends_only_complete_days_and_refuses_restated_inputs(tmp_
     closes_bad = dict(closes) | {day(2): 61_500.0 * 1.05}
     with pytest.raises(RuntimeError, match="is stored as"):
         data.update_live(d, today_utc=day(4), session=_Session(fng, closes_bad))
+
+
+def test_sell_at_80_paper_book_sells_everything_and_goes_flat(built):
+    cfg, inputs, _, _ = built
+    up = _extend(_extend(inputs, 6, fng=5, close=60_000.0), 2, fng=85, close=66_000.0)     # 3 paper buys, then the index hits 80
+    daily, _ = cli.build(up, cfg)
+    paper = daily["fng10_sell80"].filter(pl.col("mode") == "paper")
+    assert paper["n_trades"].to_list() == [1, 1, 1, 1, 0]                                   # three buys, one sale, then nothing to sell
+    assert paper["capital"][-1] == 0                                                        # flat after the sale
+    gain = 3 * 999 * (66_000 / 60_000) * 0.999 - 3_000                                      # costs on the way in and out
+    assert paper["pnl"].sum() == pytest.approx(gain, abs=0.01)
+
+
+def test_code_fingerprint_is_stable():
+    assert cli.code_version() == cli.code_version() and len(cli.code_version()) == 10
+
+
+def test_dropping_a_strategy_removes_its_files_but_never_a_paper_record(built, tmp_path):
+    cfg, inputs, daily, _ = built
+    out = str(tmp_path / "results")
+    t = daily["fng10_sell80"]
+    for sid in ("old_rule", "fng10_sell80"):
+        contract.publish_strategy(out, _manifest(sid), t)
+    contract.publish_index(out, "test", ["old_rule", "fng10_sell80"], pl.DataFrame({"strategy_id": ["x"]}), "now", "2026-11-14")
+    assert contract.prune_removed(out, ["fng10_sell80"]) == ["old_rule"]
+    assert not (tmp_path / "results" / "old_rule").exists() and (tmp_path / "results" / "fng10_sell80" / "daily.parquet").exists()
+
+    live = t.with_columns(pl.when(pl.col("date") == t["date"].max()).then(pl.lit("paper")).otherwise(pl.col("mode")).alias("mode"))
+    contract.publish_strategy(out, _manifest("old_rule"), live)
+    contract.publish_index(out, "test", ["old_rule", "fng10_sell80"], pl.DataFrame({"strategy_id": ["x"]}), "now", "2026-11-14")
+    with pytest.raises(RuntimeError, match="paper or live days"):
+        contract.prune_removed(out, ["fng10_sell80"])

@@ -10,11 +10,14 @@ job and the published results that the portfolio dashboard reads
 
 | | Paper traded | Rule |
 |---|---|---|
-| `fng10_hold` | yes | Buy 1,000 USD of BTC on every day the index is below 10. Never sell. |
-| `fng20_below_2y_avg` | yes | Buy 1,000 USD on every day the index is below 20, if the previous close was below its 730-day average. Never sell. |
+| `fng10_hold` | no | Buy 1,000 USD of BTC on every day the index is below 10. Never sell. |
+| `fng20_below_2y_avg` | no | Buy 1,000 USD on every day the index is below 20, if the previous close was below its 730-day average. Never sell. |
 | `fng20_hold` | no | Buy on every day the index is below 20. |
-| `fng10_sell80` | no | Buy below 10, sell everything when the index reaches 80. |
+| `fng10_sell80` | yes | Buy 1,000 USD on every day the index is below 10. Sell everything on the first day it is at or above 80. |
 | `fng20_mayer` | no | Buy below 20, if the previous close was more than 20% under its 200-day average. |
+
+Only `fng10_sell80` is in the portfolio. The hold rules were dropped on 17 Nov 2026: their Sharpe on dollar PnL is
+about 0.25 and their drawdowns are larger than their profits. They stay in the backtest table as tested variants.
 
 Conventions, the same in the backtest and in paper trading:
 
@@ -47,7 +50,8 @@ date-shifts of the buy days that end with at least as much PnL.
   is unchanged (435% and 455% against 448%).
 - **Sharpe on dollar PnL understates an accumulate-and-hold rule** because the position keeps growing. Per
   dollar at risk the base rule's Sharpe is 0.68.
-- **The sell-at-80 Sharpe of 0.68 rests on three closed round trips.**
+- **The sell-at-80 Sharpe of 0.68 rests on three closed round trips,** and it is measured on dollar PnL, which
+  flatters a rule that is in cash on 44% of days. Per dollar at risk its Sharpe is 0.45, below the hold rules.
 
 Paper trading exists to find out whether any of this holds on days nobody has seen yet.
 
