@@ -8,8 +8,8 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import hashlib
 import pathlib
-import subprocess
 import tomllib
 
 import numpy as np
@@ -32,10 +32,12 @@ def load_config(path: pathlib.Path) -> dict:
 
 
 def code_version() -> str:
-    try:
-        return subprocess.run(["git", "-C", str(ROOT), "rev-parse", "--short", "HEAD"], capture_output=True, text=True, check=True).stdout.strip()
-    except Exception:  # noqa: BLE001
-        return "unknown"
+    """Fingerprint of the rules and the code. It moves only when they change, not when data or results are committed,
+    and it does not depend on git history being present (CI checks out a single commit)."""
+    h = hashlib.sha1()
+    for f in sorted([*ROOT.glob("src/fng/*.py"), ROOT / "strategies.toml"]):
+        h.update(f.name.encode() + b"\0" + f.read_bytes())
+    return h.hexdigest()[:10]
 
 
 def daily_rows(dates: list[dt.date], sim: dict[str, np.ndarray], mode: str, keep: np.ndarray) -> pl.DataFrame:

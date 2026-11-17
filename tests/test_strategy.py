@@ -54,7 +54,7 @@ def test_headline_ratios(built):
 
 def test_daily_tables_follow_contract(built):
     _, _, daily, summary = built
-    assert set(daily) == {"fng10_hold", "fng20_below_2y_avg"}
+    assert set(daily) == {"fng10_hold", "fng20_below_2y_avg", "fng10_sell80"}
     for sid, t in daily.items():
         t = contract.validate_daily(t)
         assert t["pnl"].sum() == pytest.approx(summary[sid]["pnl"], abs=0.01)     # daily PnL adds up to the total
@@ -154,3 +154,18 @@ def test_live_update_appends_only_complete_days_and_refuses_restated_inputs(tmp_
     closes_bad = dict(closes) | {day(2): 61_500.0 * 1.05}
     with pytest.raises(RuntimeError, match="is stored as"):
         data.update_live(d, today_utc=day(4), session=_Session(fng, closes_bad))
+
+
+def test_sell_at_80_paper_book_sells_everything_and_goes_flat(built):
+    cfg, inputs, _, _ = built
+    up = _extend(_extend(inputs, 6, fng=5, close=60_000.0), 2, fng=85, close=66_000.0)     # 3 paper buys, then the index hits 80
+    daily, _ = cli.build(up, cfg)
+    paper = daily["fng10_sell80"].filter(pl.col("mode") == "paper")
+    assert paper["n_trades"].to_list() == [1, 1, 1, 1, 0]                                   # three buys, one sale, then nothing to sell
+    assert paper["capital"][-1] == 0                                                        # flat after the sale
+    gain = 3 * 999 * (66_000 / 60_000) * 0.999 - 3_000                                      # costs on the way in and out
+    assert paper["pnl"].sum() == pytest.approx(gain, abs=0.01)
+
+
+def test_code_fingerprint_is_stable():
+    assert cli.code_version() == cli.code_version() and len(cli.code_version()) == 10

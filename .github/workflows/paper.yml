@@ -28,13 +28,14 @@ jobs:
         run: pip install -e .
       - name: Fetch new days, advance the paper books, write results
         run: python -m fng.cli run --fetch
-      - name: Commit when a new day was added
+      - name: Commit when a day was added or the rules changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A data results
-          if git diff --cached --quiet -- data/live_daily.csv; then
-            echo "No new complete day yet."
+          # manifests carry a fingerprint of the code and strategies.toml, so they change only with the rules
+          if git diff --cached --quiet -- data/live_daily.csv ':(glob)results/*/manifest.json'; then
+            echo "No new complete day and no rule change."
             git restore --staged . && git checkout -- results
           else
             git commit -m "paper: inputs and results through $(tail -n 1 data/live_daily.csv | cut -d, -f1)"

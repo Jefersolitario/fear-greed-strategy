@@ -28,6 +28,8 @@ id = "fng10_sell80"
 name = "F&G under 10, sell all at 80"
 threshold = 10
 sell_all_at = 80
+paper = true
+description = "Buy 1,000 USD of BTC at the UTC close of every day the index is below 10. Sell the whole position at the UTC close of the first day the index is at or above 80."
 
 [[strategy]]
 id = "fng20_mayer"
