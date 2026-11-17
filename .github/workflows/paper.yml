@@ -1,0 +1,42 @@
+name: paper-trading
+
+# Appends yesterday's complete UTC day, advances the paper books and commits the results.
+# The run is idempotent: a late, skipped or repeated run only delays the record, it never changes it.
+on:
+  schedule:
+    - cron: "37 0 * * *"   # shortly after the UTC close and the index update
+    - cron: "37 6 * * *"   # catch-up in case the first run was dropped
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: paper-trading
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: pip install -e .
+      - name: Fetch new days, advance the paper books, write results
+        run: python -m fng.cli run --fetch
+      - name: Commit when a new day was added
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A data results
+          if git diff --cached --quiet -- data/live_daily.csv; then
+            echo "No new complete day yet."
+            git restore --staged . && git checkout -- results
+          else
+            git commit -m "paper: inputs and results through $(tail -n 1 data/live_daily.csv | cut -d, -f1)"
+            git push
+          fi
