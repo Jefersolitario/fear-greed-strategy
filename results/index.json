@@ -2,9 +2,8 @@
   "contract_version": 1,
   "source": "fear-greed-strategy",
   "strategies": [
-    "fng10_hold",
-    "fng20_below_2y_avg"
+    "fng10_sell80"
   ],
-  "updated_utc": "2026-11-17T06:16:19Z",
+  "updated_utc": "2026-11-17T16:26:14Z",
   "data_through": "2026-11-16"
 }
