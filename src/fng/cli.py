@@ -44,13 +44,20 @@ def code_version() -> str:
     return h.hexdigest()[:10]
 
 
-def daily_rows(dates: list[dt.date], sim: dict[str, np.ndarray], mode: str, keep: np.ndarray) -> pl.DataFrame:
-    """Contract rows for the days in `keep`, starting at the first trade. PnL is re-based inside the kept window."""
+def daily_rows(dates: list[dt.date], sim: dict[str, np.ndarray], mode: str, keep: np.ndarray, from_first_trade: bool = True) -> pl.DataFrame:
+    """Contract rows for the days in `keep`. PnL is re-based inside the kept window.
+
+    Backtest rows start at the first trade, as in the audited backtest. Paper rows start on the first paper day
+    whether or not there was a trade: a live record runs from go-live, and a flat day is a day with zero PnL.
+    """
     idx = np.where(keep)[0]
-    traded = np.where(keep & (sim["trades"] > 0))[0]
-    if len(traded) == 0:
+    if from_first_trade:
+        traded = np.where(keep & (sim["trades"] > 0))[0]
+        if len(traded) == 0:
+            return pl.DataFrame(schema=contract.DAILY_SCHEMA)
+        idx = idx[idx >= traded[0]]
+    if len(idx) == 0:
         return pl.DataFrame(schema=contract.DAILY_SCHEMA)
-    idx = idx[idx >= traded[0]]
     cum = sim["cum_pnl"][idx]
     pnl = np.diff(np.concatenate([[0.0], cum]))
     return pl.DataFrame({"date": [dates[i] for i in idx], "mode": [mode] * len(idx), "pnl": pnl,
@@ -85,7 +92,7 @@ def build(inputs: pl.DataFrame, cfg: dict) -> tuple[dict[str, pl.DataFrame], pl.
         })
         if r.get("paper", False):
             pp = run_rule(fng, close, rule, active=in_paper)       # paper book starts flat on paper_start
-            daily[rule.id] = pl.concat([t_bt, daily_rows(dates, pp, "paper", in_paper)])
+            daily[rule.id] = pl.concat([t_bt, daily_rows(dates, pp, "paper", in_paper, from_first_trade=False)])
     return daily, pl.DataFrame(rows)
 
 

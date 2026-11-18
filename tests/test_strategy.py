@@ -210,3 +210,21 @@ def test_monitoring_rule_is_published_with_its_role(built):
     assert summary["fng_le15_sell80"]["role"] == "monitor"
     assert summary["fng_le15_sell80"]["buys"] == 244
     assert summary["fng_le15_sell80"]["pnl"] == pytest.approx(153_811, abs=25)
+
+
+def test_paper_record_starts_at_go_live_even_without_a_trade(built):
+    cfg, inputs, _, _ = built
+    quiet = _extend(inputs, 8, fng=50, close=60_000.0)                       # no signal on any paper day
+    daily, _ = cli.build(quiet, cfg)
+    for sid in ("fng_le10_sell80", "fng_le15_sell80"):
+        paper = daily[sid].filter(pl.col("mode") == "paper")
+        assert paper["date"].min() == cfg["paper_start"]
+        assert paper.height == (quiet["date"].max() - cfg["paper_start"]).days + 1
+        assert (paper["pnl"] == 0).all() and (paper["capital"] == 0).all() and paper["n_trades"].sum() == 0
+    # the 15 rule trades on a day the 10 rule stays flat
+    split = _extend(inputs, 5, fng=11, close=60_000.0)
+    daily, _ = cli.build(split, cfg)
+    p10 = daily["fng_le10_sell80"].filter(pl.col("mode") == "paper")
+    p15 = daily["fng_le15_sell80"].filter(pl.col("mode") == "paper")
+    assert p10["n_trades"].sum() == 0 and p10.height == p15.height == 2      # 18 and 19 Nov
+    assert p15["n_trades"].to_list() == [1, 1] and p15["pnl"][0] == pytest.approx(-1.0, abs=1e-6)

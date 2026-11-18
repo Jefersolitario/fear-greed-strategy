@@ -29,6 +29,7 @@ Conventions, the same in the backtest and in paper trading:
 - Price filters use the close of D-1 only.
 - 10 bps cost per side, cash earns 0%, PnL = BTC value + sale proceeds - dollars put in.
 - Paper books start flat on `paper_start` in `strategies.toml`. Backtest lots are not carried over.
+- The paper record has a row for every day from `paper_start`, with zero PnL on days without a position.
 
 ## Backtest, 1 Feb 2018 to 14 Nov 2026
 
