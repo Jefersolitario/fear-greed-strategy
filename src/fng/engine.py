@@ -24,7 +24,8 @@ class Rule:
 
     id: str
     name: str
-    threshold: int                  # buy when the index is strictly below this
+    threshold: int                  # buy when the index is below this (or equal to it when inclusive)
+    inclusive: bool = False          # True: an index exactly at the threshold also buys
     price_filter: str | None = None  # None, "below_ma730" or "mayer_below_0.8"
     sell_all_at: int | None = None   # sell everything when the index is at or above this
 
@@ -59,7 +60,7 @@ def price_filter(close: np.ndarray, kind: str | None) -> np.ndarray:
 
 
 def buy_mask(fng: np.ndarray, close: np.ndarray, rule: Rule) -> np.ndarray:
-    below = np.where(np.isnan(fng), False, fng < rule.threshold)
+    below = np.where(np.isnan(fng), False, (fng <= rule.threshold) if rule.inclusive else (fng < rule.threshold))
     return below & price_filter(close, rule.price_filter)
 
 

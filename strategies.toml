@@ -1,5 +1,8 @@
 # Every [[strategy]] is tested in the backtest. Those with paper = true are paper traded and published.
-# 17 Nov 2026: the portfolio keeps only fng10_sell80. The hold rules stay here as tested variants.
+# role = "monitor" publishes a strategy for comparison only: dashboards show it but leave it out of portfolio totals.
+# 17 Nov 2026: the portfolio keeps only the sell-at-80 rule. The hold rules stay here as tested variants.
+# 18 Nov 2026: an index of exactly 10 now buys ("buy at 10, sell at 80"). The rule got a new id, fng_le10_sell80,
+# because a different rule has a different history. No paper fill had happened under the old one.
 source = "fear-greed-strategy"
 backtest_start = "2018-02-01"   # first day of the Fear & Greed index
 paper_start = "2026-11-18"      # paper books start flat on this UTC day; the rules were committed before it
@@ -23,12 +26,29 @@ name = "F&G under 20, hold"
 threshold = 20
 
 [[strategy]]
+id = "fng_le10_sell80"
+name = "F&G 10 or lower, sell all at 80"
+threshold = 10
+inclusive = true
+sell_all_at = 80
+paper = true
+description = "Buy 1,000 USD of BTC at the UTC close of every day the index is 10 or lower. Sell the whole position at the UTC close of the first day the index is at or above 80."
+
+[[strategy]]
+id = "fng_le15_sell80"
+name = "F&G 15 or lower, sell all at 80"
+threshold = 15
+inclusive = true
+sell_all_at = 80
+paper = true
+role = "monitor"
+description = "Monitoring only, not part of the portfolio. Buy 1,000 USD of BTC at the UTC close of every day the index is 15 or lower. Sell the whole position at the UTC close of the first day the index is at or above 80."
+
+[[strategy]]
 id = "fng10_sell80"
 name = "F&G under 10, sell all at 80"
 threshold = 10
 sell_all_at = 80
-paper = true
-description = "Buy 1,000 USD of BTC at the UTC close of every day the index is below 10. Sell the whole position at the UTC close of the first day the index is at or above 80."
 
 [[strategy]]
 id = "fng20_mayer"
