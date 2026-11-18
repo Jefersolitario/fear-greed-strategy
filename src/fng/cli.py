@@ -28,6 +28,10 @@ def load_config(path: pathlib.Path) -> dict:
     cfg["paper_start"] = dt.date.fromisoformat(cfg["paper_start"])
     cfg["rules"] = [dict(r, rule=Rule(id=r["id"], name=r["name"], threshold=r["threshold"], inclusive=r.get("inclusive", False), price_filter=r.get("price_filter"),
                                       sell_all_at=r.get("sell_all_at"))) for r in cfg["strategy"]]
+    for r in cfg["rules"]:
+        r["role"] = r.get("role", "portfolio") if r.get("paper", False) else "tested"
+        if r["role"] not in ("portfolio", "monitor", "tested"):
+            raise ValueError(f"{r['id']}: role must be 'portfolio' or 'monitor'")
     return cfg
 
 
@@ -72,7 +76,7 @@ def build(inputs: pl.DataFrame, cfg: dict) -> tuple[dict[str, pl.DataFrame], pl.
         put_in = buys * TICKET
         hold_only = rule.sell_all_at is None and buys > 0
         rows.append({
-            "strategy_id": rule.id, "name": rule.name, "paper_traded": bool(r.get("paper", False)),
+            "strategy_id": rule.id, "name": rule.name, "paper_traded": bool(r.get("paper", False)), "role": r["role"],
             "start": t_bt["date"].min(), "end": t_bt["date"].max(), "buys": buys, "put_in": put_in,
             "pnl": s["pnl"], "return_pct": 100 * s["pnl"] / put_in if put_in else None,
             "sharpe": s["sharpe"], "sortino": s["sortino"], "max_dd": s["max_dd"],
@@ -106,7 +110,7 @@ def main(argv: list[str] | None = None) -> int:
         rule: Rule = r["rule"]
         manifest = {"id": rule.id, "name": rule.name, "market": "BTC-USD spot", "currency": "USD", "days_per_year": DAYS_PER_YEAR,
                     "backtest_start": cfg["backtest_start"], "paper_start": cfg["paper_start"], "description": r.get("description", ""),
-                    "ticket_usd": TICKET, "code_version": version, "source_repo": cfg["source"]}
+                    "ticket_usd": TICKET, "code_version": version, "source_repo": cfg["source"], "role": r["role"]}
         contract.publish_strategy(a.out, manifest, daily[rule.id], allow_restate=a.allow_restate)
     for sid in contract.prune_removed(a.out, list(daily), allow_restate=a.allow_restate):
         print(f"{sid}: no longer in the portfolio, published files removed")

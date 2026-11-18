@@ -54,7 +54,7 @@ def test_headline_ratios(built):
 
 def test_daily_tables_follow_contract(built):
     _, _, daily, summary = built
-    assert set(daily) == {"fng_le10_sell80"}                                      # the only rule in the portfolio
+    assert set(daily) == {"fng_le10_sell80", "fng_le15_sell80"}                   # one in the portfolio, one monitored
     for sid, t in daily.items():
         t = contract.validate_daily(t)
         assert t["pnl"].sum() == pytest.approx(summary[sid]["pnl"], abs=0.01)     # daily PnL adds up to the total
@@ -201,3 +201,12 @@ def test_an_index_of_exactly_10_buys_only_under_the_inclusive_rule(built):
     row = summary["fng_le10_sell80"]                          # audit sensitivity run: 69 buys, about +$41.6K
     assert row["buys"] == 69
     assert row["pnl"] == pytest.approx(41_600, abs=150)
+
+
+def test_monitoring_rule_is_published_with_its_role(built):
+    cfg, _, daily, summary = built
+    roles = {r["id"]: r["role"] for r in cfg["rules"]}
+    assert roles["fng_le10_sell80"] == "portfolio" and roles["fng_le15_sell80"] == "monitor" and roles["fng20_hold"] == "tested"
+    assert summary["fng_le15_sell80"]["role"] == "monitor"
+    assert summary["fng_le15_sell80"]["buys"] == 244
+    assert summary["fng_le15_sell80"]["pnl"] == pytest.approx(153_811, abs=25)

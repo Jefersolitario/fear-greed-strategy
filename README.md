@@ -14,6 +14,7 @@ job and the published results that the portfolio dashboard reads
 | `fng20_below_2y_avg` | no | Buy 1,000 USD on every day the index is below 20, if the previous close was below its 730-day average. Never sell. |
 | `fng20_hold` | no | Buy on every day the index is below 20. |
 | `fng_le10_sell80` | yes | Buy 1,000 USD on every day the index is 10 or lower. Sell everything on the first day it is at or above 80. |
+| `fng_le15_sell80` | yes, monitoring only | The same with 15 as the threshold. Published for comparison; dashboards keep it out of portfolio totals. |
 | `fng10_sell80` | no | The same with a strict threshold: buy only when the index is below 10. |
 | `fng20_mayer` | no | Buy below 20, if the previous close was more than 20% under its 200-day average. |
 
@@ -37,6 +38,7 @@ Conventions, the same in the backtest and in paper trading:
 | F&G under 20, below 2-year average | 228 | +$991,848 | +435% | 0.27 | 0.39 | -$1,181,455 | 0.16 |
 | F&G under 20, hold | 350 | +$1,567,975 | +448% | 0.25 | 0.36 | -$1,895,742 | 0.14 |
 | F&G 10 or lower, sell all at 80 | 69 | +$41,610 | +60% | 0.75 | 1.19 | -$10,403 | n/a |
+| F&G 15 or lower, sell all at 80 | 244 | +$153,811 | +63% | 0.85 | 1.36 | -$29,987 | n/a |
 | F&G under 10, sell all at 80 | 42 | +$24,392 | +58% | 0.68 | 1.07 | -$7,675 | n/a |
 | F&G under 20, Mayer below 0.8 | 237 | +$1,079,517 | +455% | 0.26 | 0.37 | -$1,294,473 | 0.18 |
 
@@ -88,13 +90,14 @@ Every strategy in the portfolio publishes the same files, so the dashboard needs
 results/
   index.json                   strategy ids, contract version, last update
   backtest_summary.parquet     one row per tested variant
-  <strategy_id>/manifest.json  name, market, currency, days per year, start dates, code version
+  <strategy_id>/manifest.json  name, market, currency, days per year, start dates, code version, role
   <strategy_id>/daily.parquet  date, mode (backtest | paper | live), pnl, capital, n_trades
 ```
 
 `pnl` is that day's PnL in the manifest currency. It is not cumulative and not a return: daily PnL is the one
 form that adds up across strategies and re-bases to any date range. `capital` is the market value of open
-positions at the close. The dashboard computes every statistic itself.
+positions at the close. The dashboard computes every statistic itself. A manifest `role` of `monitor` marks a
+strategy that is published for comparison only and stays out of portfolio totals.
 
 `--out` accepts any fsspec location, so the same command publishes to a bucket:
 `python -m fng.cli run --fetch --out gs://<bucket>/fear-greed-strategy` (see [docs/gcs.md](docs/gcs.md)).

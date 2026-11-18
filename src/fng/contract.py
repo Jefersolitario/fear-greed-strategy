@@ -4,7 +4,8 @@ Layout under a results root (a folder, gs://bucket/prefix, s3://..., anything fs
 
     index.json                      {"contract_version": 1, "source": ..., "strategies": [ids], "updated_utc": ...}
     backtest_summary.parquet        one row per tested variant
-    <strategy_id>/manifest.json     id, name, market, currency, days_per_year, inception dates, code version
+    <strategy_id>/manifest.json     id, name, market, currency, days_per_year, inception dates, code version,
+                                    role ("portfolio", the default, or "monitor": shown for comparison, kept out of totals)
     <strategy_id>/daily.parquet     one row per UTC day
 
 daily.parquet columns
