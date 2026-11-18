@@ -13,10 +13,13 @@ job and the published results that the portfolio dashboard reads
 | `fng10_hold` | no | Buy 1,000 USD of BTC on every day the index is below 10. Never sell. |
 | `fng20_below_2y_avg` | no | Buy 1,000 USD on every day the index is below 20, if the previous close was below its 730-day average. Never sell. |
 | `fng20_hold` | no | Buy on every day the index is below 20. |
-| `fng10_sell80` | yes | Buy 1,000 USD on every day the index is below 10. Sell everything on the first day it is at or above 80. |
+| `fng_le10_sell80` | yes | Buy 1,000 USD on every day the index is 10 or lower. Sell everything on the first day it is at or above 80. |
+| `fng10_sell80` | no | The same with a strict threshold: buy only when the index is below 10. |
 | `fng20_mayer` | no | Buy below 20, if the previous close was more than 20% under its 200-day average. |
 
-Only `fng10_sell80` is in the portfolio. The hold rules were dropped on 17 Nov 2026: their Sharpe on dollar PnL is
+Only `fng_le10_sell80` is in the portfolio. Until 18 Nov 2026 the rule in the portfolio bought strictly below 10; it was
+changed to include 10 before any paper fill had happened, and it got a new id because a different rule has a
+different history. The hold rules were dropped on 17 Nov 2026: their Sharpe on dollar PnL is
 about 0.25 and their drawdowns are larger than their profits. They stay in the backtest table as tested variants.
 
 Conventions, the same in the backtest and in paper trading:
@@ -33,6 +36,7 @@ Conventions, the same in the backtest and in paper trading:
 | F&G under 10, hold | 42 | +$107,780 | +257% | 0.25 | 0.36 | -$135,139 | 0.40 |
 | F&G under 20, below 2-year average | 228 | +$991,848 | +435% | 0.27 | 0.39 | -$1,181,455 | 0.16 |
 | F&G under 20, hold | 350 | +$1,567,975 | +448% | 0.25 | 0.36 | -$1,895,742 | 0.14 |
+| F&G 10 or lower, sell all at 80 | 69 | +$41,610 | +60% | 0.75 | 1.19 | -$10,403 | n/a |
 | F&G under 10, sell all at 80 | 42 | +$24,392 | +58% | 0.68 | 1.07 | -$7,675 | n/a |
 | F&G under 20, Mayer below 0.8 | 237 | +$1,079,517 | +455% | 0.26 | 0.37 | -$1,294,473 | 0.18 |
 

@@ -26,7 +26,7 @@ def load_config(path: pathlib.Path) -> dict:
         cfg = tomllib.load(f)
     cfg["backtest_start"] = dt.date.fromisoformat(cfg["backtest_start"])
     cfg["paper_start"] = dt.date.fromisoformat(cfg["paper_start"])
-    cfg["rules"] = [dict(r, rule=Rule(id=r["id"], name=r["name"], threshold=r["threshold"], price_filter=r.get("price_filter"),
+    cfg["rules"] = [dict(r, rule=Rule(id=r["id"], name=r["name"], threshold=r["threshold"], inclusive=r.get("inclusive", False), price_filter=r.get("price_filter"),
                                       sell_all_at=r.get("sell_all_at"))) for r in cfg["strategy"]]
     return cfg
 
