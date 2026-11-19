@@ -1,0 +1,14 @@
+{
+  "id": "fng_le10_sell80",
+  "name": "F&G 10 or lower, sell all at 80",
+  "market": "BTC-USD spot",
+  "currency": "USD",
+  "days_per_year": 365,
+  "backtest_start": "2018-02-01",
+  "paper_start": "2026-11-18",
+  "description": "Buy 1,000 USD of BTC at the UTC close of every day the index is 10 or lower. Sell the whole position at the UTC close of the first day the index is at or above 80.",
+  "ticket_usd": 1000.0,
+  "code_version": "6b2083e872",
+  "source_repo": "fear-greed-strategy",
+  "role": "portfolio"
+}
