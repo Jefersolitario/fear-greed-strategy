@@ -1,5 +1,5 @@
 {
- "fetched_utc": "2026-11-21T07:55:02Z",
+ "fetched_utc": "2026-11-21T07:57:39Z",
  "historical_pages": [
   {
    "data": [
@@ -2505,7 +2505,7 @@
     }
    ],
    "status": {
-    "timestamp": "2026-11-21T07:55:02.905Z",
+    "timestamp": "2026-11-21T07:57:40.189Z",
     "error_code": "0",
     "error_message": "",
     "elapsed": 3,
@@ -5016,10 +5016,10 @@
     }
    ],
    "status": {
-    "timestamp": "2026-11-21T07:55:05.472Z",
+    "timestamp": "2026-11-21T07:57:42.797Z",
     "error_code": "0",
     "error_message": "",
-    "elapsed": 5,
+    "elapsed": 3,
     "credit_count": 1
    }
   },
@@ -6232,20 +6232,20 @@
     }
    ],
    "status": {
-    "timestamp": "2026-11-21T07:55:08.021Z",
+    "timestamp": "2026-11-21T07:57:45.343Z",
     "error_code": "0",
     "error_message": "",
-    "elapsed": 3,
+    "elapsed": 1,
     "credit_count": 1
    }
   },
   {
    "data": [],
    "status": {
-    "timestamp": "2026-11-21T07:55:10.571Z",
+    "timestamp": "2026-11-21T07:57:47.945Z",
     "error_code": "0",
     "error_message": "",
-    "elapsed": 4,
+    "elapsed": 2,
     "credit_count": 1
    }
   }
@@ -6257,7 +6257,7 @@
    "value_classification": "Extreme fear"
   },
   "status": {
-   "timestamp": "2026-11-21T07:55:10.619Z",
+   "timestamp": "2026-11-21T07:57:47.994Z",
    "error_code": "0",
    "error_message": "",
    "elapsed": 2,
