@@ -1,0 +1,40 @@
+name: cmc-history
+
+# One-off research download: the history of CoinMarketCap's Fear and Greed index, for a backtest.
+# It is not part of the paper-trading job and touches nothing under data/ or results/.
+on:
+  push:
+    branches: [claude/cmc-history]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cmc-history
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download the history (the key comes from the repository secret and is never printed)
+        env:
+          CMC_API_KEY: ${{ secrets.CMC_API_KEY }}
+        run: python3 research/fetch_cmc_fng.py
+      - name: Commit what was written, also when the download failed
+        if: always()
+        env:
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A research/data
+          if git diff --cached --quiet; then
+            echo "Nothing was written."
+          else
+            git commit -m "research: CoinMarketCap Fear and Greed history"
+            git push origin "HEAD:$BRANCH"
+          fi
