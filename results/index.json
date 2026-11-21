@@ -2,9 +2,10 @@
   "contract_version": 1,
   "source": "fear-greed-strategy",
   "strategies": [
+    "cmc_le10_sell80",
     "fng_le10_sell80",
     "fng_le15_sell80"
   ],
-  "updated_utc": "2026-11-21T07:15:36Z",
+  "updated_utc": "2026-11-21T08:47:56Z",
   "data_through": "2026-11-20"
 }

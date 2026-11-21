@@ -1,0 +1,15 @@
+{
+  "id": "cmc_le10_sell80",
+  "name": "CMC F&G 10 or lower, sell all at 80",
+  "market": "BTC-USD spot",
+  "currency": "USD",
+  "days_per_year": 365,
+  "backtest_start": "2023-06-30",
+  "paper_start": "2026-11-21",
+  "description": "Buy 1,000 USD of BTC at the UTC close of every day on which CoinMarketCap's Fear and Greed value of the day before is 10 or lower. Sell the whole position at the UTC close of the first day on which that value is at or above 80.",
+  "ticket_usd": 1000.0,
+  "code_version": "3dee2d8b30",
+  "source_repo": "fear-greed-strategy",
+  "role": "portfolio",
+  "index": "CoinMarketCap Fear and Greed, value of the day before"
+}
