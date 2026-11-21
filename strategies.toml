@@ -25,6 +25,21 @@ id = "fng20_hold"
 name = "F&G under 20, hold"
 threshold = 20
 
+# 21 Nov 2026: the portfolio rule now reads CoinMarketCap's Fear and Greed index (cmc_le10_sell80). A rule on another
+# index is a different rule: it has its own id, its own backtest, which can only start with that index in June 2023, and
+# a paper book that starts flat. The rule on Alternative.me's index keeps running below, for comparison only.
+[[strategy]]
+id = "cmc_le10_sell80"
+name = "CMC F&G 10 or lower, sell all at 80"
+index = "cmc"
+threshold = 10
+inclusive = true
+sell_all_at = 80
+paper = true
+backtest_start = "2023-06-30"   # the day after CoinMarketCap's first value
+paper_start = "2026-11-21"      # the rule must be on main before this UTC day ends
+description = "Buy 1,000 USD of BTC at the UTC close of every day on which CoinMarketCap's Fear and Greed value of the day before is 10 or lower. Sell the whole position at the UTC close of the first day on which that value is at or above 80."
+
 [[strategy]]
 id = "fng_le10_sell80"
 name = "F&G 10 or lower, sell all at 80"
@@ -32,7 +47,8 @@ threshold = 10
 inclusive = true
 sell_all_at = 80
 paper = true
-description = "Buy 1,000 USD of BTC at the UTC close of every day the index is 10 or lower. Sell the whole position at the UTC close of the first day the index is at or above 80."
+role = "monitor"
+description = "Monitoring only since 21 Nov 2026, when the portfolio moved to CoinMarketCap's index. Buy 1,000 USD of BTC at the UTC close of every day Alternative.me's index is 10 or lower. Sell the whole position at the UTC close of the first day the index is at or above 80."
 
 [[strategy]]
 id = "fng_le15_sell80"

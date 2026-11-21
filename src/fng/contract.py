@@ -20,6 +20,7 @@ The dashboard computes every statistic from `pnl`; a strategy never reports its 
 """
 from __future__ import annotations
 
+import datetime as dt
 import io
 import json
 
@@ -105,12 +106,36 @@ def check_append_only(old: pl.DataFrame | None, new: pl.DataFrame, tol: float = 
                            f"{changed['pnl_old'][0]:.2f} -> {changed['pnl'][0]:.2f}. Re-run with --allow-restate only if this is intended.")
 
 
-def publish_strategy(root: str, manifest: dict, daily: pl.DataFrame, allow_restate: bool = False) -> None:
+def published_through(root: str) -> dt.date | None:
+    """The last day the results at `root` cover, or None when nothing has been published there."""
+    raw = read_bytes(_join(root, "index.json"))
+    through = None if raw is None else json.loads(raw).get("data_through")
+    return dt.date.fromisoformat(through) if through else None
+
+
+def check_not_backdated(old: pl.DataFrame | None, new: pl.DataFrame, through: dt.date | None, sid: str = "strategy") -> None:
+    """A paper day is published in the run that first publishes that day, or never.
+
+    A rule added later would otherwise get paper fills on days whose closes were already known when it was written.
+    `through` is the last day the results covered before this run.
+    """
+    if through is None:
+        return
+    known = [] if old is None else old["date"].to_list()
+    late = new.filter((pl.col("mode") != "backtest") & (pl.col("date") <= through) & ~pl.col("date").is_in(known))
+    if late.height:
+        raise RuntimeError(f"{sid}: paper days from {late['date'].min()} to {late['date'].max()} would be added after results through {through} "
+                           f"were published without them. The rule was not live on those days: set its paper_start to {through + dt.timedelta(days=1)} or later.")
+
+
+def publish_strategy(root: str, manifest: dict, daily: pl.DataFrame, allow_restate: bool = False, through: dt.date | None = None) -> None:
     validate_manifest(manifest)
     daily = validate_daily(daily)
     uri = _join(root, manifest["id"], "daily.parquet")
     if not allow_restate:
-        check_append_only(read_parquet(uri), daily)
+        old = read_parquet(uri)
+        check_append_only(old, daily)
+        check_not_backdated(old, daily, through, manifest["id"])
     write_parquet(uri, daily)
     write_json(_join(root, manifest["id"], "manifest.json"), manifest)
 

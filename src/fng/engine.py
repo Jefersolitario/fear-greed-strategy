@@ -1,8 +1,10 @@
 """Signals, lot simulator and statistics.
 
 Conventions (identical in backtest and paper trading)
-- The Fear & Greed value stamped day D is published around 00:00 UTC on D.
+- Alternative.me's Fear & Greed value stamped day D is published around 00:00 UTC on D.
 - A buy decided on D is filled at the UTC close of D (about 24 hours later).
+- A rule on CoinMarketCap's index decides day D on the value stamped D-1. CoinMarketCap describes a daily
+  value as the one at 12am UTC and does not say when it is published, so the rule waits a full day.
 - Filters built from prices use the close of D-1 only.
 - Ticket: 1,000 USD per signal day. Cost: 10 bps per side. Cash earns 0%.
 - PnL = BTC value + sale proceeds - dollars put in.
@@ -28,6 +30,7 @@ class Rule:
     inclusive: bool = False          # True: an index exactly at the threshold also buys
     price_filter: str | None = None  # None, "below_ma730" or "mayer_below_0.8"
     sell_all_at: int | None = None   # sell everything when the index is at or above this
+    index: str = "alt"               # "alt": Alternative.me's value of the day; "cmc": CoinMarketCap's value of the day before
 
 
 def rolling_mean(x: np.ndarray, w: int) -> np.ndarray:

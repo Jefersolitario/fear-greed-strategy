@@ -27,6 +27,8 @@ jobs:
       - name: Install
         run: pip install -e .
       - name: Fetch new days, advance the paper books, write results
+        env:
+          CMC_API_KEY: ${{ secrets.CMC_API_KEY }}    # optional: without it CoinMarketCap's keyless API is used
         run: python -m fng.cli run --fetch
       - name: Commit when a day was added or the rules changed
         run: |
