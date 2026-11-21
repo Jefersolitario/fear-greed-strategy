@@ -1,0 +1,1 @@
+ok 2026-11-21T07:55:02Z (keyless, 4 calls): 1241 days from 2023-06-29 to 2026-11-20, 0 repeated dates, stamped at 00:00 UTC; latest {"value": 7, "update_time": "2026-11-21T07:53:10.025Z", "value_classification": "Extreme fear"}
