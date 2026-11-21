@@ -1,5 +1,5 @@
 {
- "fetched_utc": "2026-11-21T07:57:39Z",
+ "fetched_utc": "2026-11-21T08:28:32Z",
  "historical_pages": [
   {
    "data": [
@@ -2505,10 +2505,10 @@
     }
    ],
    "status": {
-    "timestamp": "2026-11-21T07:57:40.189Z",
+    "timestamp": "2026-11-21T08:28:32.469Z",
     "error_code": "0",
     "error_message": "",
-    "elapsed": 3,
+    "elapsed": 2,
     "credit_count": 1
    }
   },
@@ -5016,10 +5016,10 @@
     }
    ],
    "status": {
-    "timestamp": "2026-11-21T07:57:42.797Z",
+    "timestamp": "2026-11-21T08:28:35.136Z",
     "error_code": "0",
     "error_message": "",
-    "elapsed": 3,
+    "elapsed": 4,
     "credit_count": 1
    }
   },
@@ -6232,17 +6232,17 @@
     }
    ],
    "status": {
-    "timestamp": "2026-11-21T07:57:45.343Z",
+    "timestamp": "2026-11-21T08:28:37.691Z",
     "error_code": "0",
     "error_message": "",
-    "elapsed": 1,
+    "elapsed": 4,
     "credit_count": 1
    }
   },
   {
    "data": [],
    "status": {
-    "timestamp": "2026-11-21T07:57:47.945Z",
+    "timestamp": "2026-11-21T08:28:40.293Z",
     "error_code": "0",
     "error_message": "",
     "elapsed": 2,
@@ -6252,12 +6252,12 @@
  ],
  "latest": {
   "data": {
-   "value": 7,
-   "update_time": "2026-11-21T07:53:10.025Z",
+   "value": 6,
+   "update_time": "2026-11-21T08:23:10.020Z",
    "value_classification": "Extreme fear"
   },
   "status": {
-   "timestamp": "2026-11-21T07:57:47.994Z",
+   "timestamp": "2026-11-21T08:28:40.451Z",
    "error_code": "0",
    "error_message": "",
    "elapsed": 2,
