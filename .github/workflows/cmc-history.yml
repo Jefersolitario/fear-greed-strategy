@@ -17,10 +17,10 @@ concurrency:
 jobs:
   fetch:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
-      - name: Download the history (the key comes from the repository secret and is never printed)
+      - name: Download the history (keyless; a key in the repository secret CMC_API_KEY is used if there is one, and never printed)
         env:
           CMC_API_KEY: ${{ secrets.CMC_API_KEY }}
         run: python3 research/fetch_cmc_fng.py

@@ -1,9 +1,10 @@
 """Download the full history of CoinMarketCap's Crypto Fear and Greed index. Research only: the paper-trading job does not use it.
 
-    CMC_API_KEY=... python research/fetch_cmc_fng.py
+    python research/fetch_cmc_fng.py
 
-The key (a free CoinMarketCap API key) is read from the environment, sent in a request header, and never printed or
-written to a file. Under research/data/ the script writes:
+No key is needed: CoinMarketCap's keyless public API serves this index. If the environment variable CMC_API_KEY holds a
+key, the keyed API is used instead; the key is sent in a request header and never printed or written to a file.
+Under research/data/ the script writes:
 
     cmc_fng_daily.csv       date (UTC), value, classification, and the timestamp exactly as the API gave it
     cmc_fng_raw.json        the API's answers, untouched, so the parsing can be checked
@@ -22,25 +23,35 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-BASE = os.environ.get("CMC_BASE", "https://pro-api.coinmarketcap.com/v3/fear-and-greed")   # CMC_BASE: a stand-in server for tests
+KEY = os.environ.get("CMC_API_KEY", "").strip()
+HOST = os.environ.get("CMC_HOST", "https://pro-api.coinmarketcap.com")   # CMC_HOST: a stand-in server for tests
+BASE = HOST + ("" if KEY else "/public-api") + "/v3/fear-and-greed"      # keyless paths are the keyed ones behind /public-api
 OUT = pathlib.Path(__file__).resolve().parent / "data"
-PAGE = 500                                                              # the most the endpoint returns per call
+PAGE = 500                                                              # the most the keyed endpoint returns per call
+PAUSE = float(os.environ.get("CMC_PAUSE", "2.5"))                       # seconds between calls
 UTC = dt.timezone.utc
 
 
-def get(path: str, params: dict, key: str) -> dict:
+def get(path: str, params: dict) -> dict:
     url = f"{BASE}/{path}" + ("?" + urllib.parse.urlencode(params) if params else "")
-    request = urllib.request.Request(url, headers={"X-CMC_PRO_API_KEY": key, "Accept": "application/json", "User-Agent": "fear-greed-strategy-research"})
-    try:
-        with urllib.request.urlopen(request, timeout=30) as response:
-            return json.loads(response.read().decode("utf-8"))
-    except urllib.error.HTTPError as e:
-        body = e.read().decode("utf-8", "replace")
+    headers = {"Accept": "application/json", "User-Agent": "fear-greed-strategy-research"}
+    if KEY:
+        headers["X-CMC_PRO_API_KEY"] = KEY
+    for attempt in range(6):
         try:
-            message = (json.loads(body).get("status") or {}).get("error_message") or body[:300]
-        except ValueError:
-            message = body[:300]
-        raise RuntimeError(f"HTTP {e.code} from {path}: {message}") from None
+            with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=30) as response:
+                return json.loads(response.read().decode("utf-8"))
+        except urllib.error.HTTPError as e:
+            body = e.read().decode("utf-8", "replace")
+            if e.code in (429, 500, 502, 503, 504) and attempt < 5:
+                time.sleep(PAUSE * 2 ** (attempt + 1))                  # the keyless pool is shared by address: back off and try again
+                continue
+            try:
+                message = (json.loads(body).get("status") or {}).get("error_message") or body[:300]
+            except ValueError:
+                message = body[:300]
+            raise RuntimeError(f"HTTP {e.code} from {path}: {message}") from None
+    raise RuntimeError(f"no answer from {path}")
 
 
 def when(stamp) -> dt.datetime:
@@ -56,22 +67,21 @@ def main() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
     now = dt.datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
     try:
-        key = os.environ.get("CMC_API_KEY", "").strip()
-        if not key:
-            raise RuntimeError("the secret CMC_API_KEY is empty or not set for this repository")
-        pages, entries, start = [], [], 1
-        while True:
-            page = get("historical", {"start": start, "limit": PAGE}, key)
+        pages, entries, start, seen = [], [], 1, set()
+        while len(pages) < 80:
+            page = get("historical", {"start": start, "limit": PAGE})
             pages.append(page)
             rows = page.get("data") or []
-            entries.extend(rows)
-            if len(rows) < PAGE or start > 20_000:
-                break
-            start += PAGE
-            time.sleep(float(os.environ.get("CMC_PAUSE", "2.5")))                                             # the free plan allows 30 calls a minute
+            fresh = [x for x in rows if str(x["timestamp"]) not in seen]
+            if not fresh:
+                break                                                   # an empty page, or one that only repeats: the history is complete
+            seen.update(str(x["timestamp"]) for x in fresh)
+            entries.extend(fresh)
+            start += len(rows)                                          # by what came back, in case the page is capped below what was asked
+            time.sleep(PAUSE)
         if not entries:
             raise RuntimeError(f"the API answered without data: {json.dumps(pages[0])[:300]}")
-        latest = get("latest", {}, key)
+        latest = get("latest", {})
         by_day: dict[dt.date, tuple] = {}
         repeats = 0
         for x in entries:
@@ -89,7 +99,7 @@ def main() -> int:
             w.writerows(ordered)
         (OUT / "cmc_fng_raw.json").write_text(json.dumps({"fetched_utc": now, "historical_pages": pages, "latest": latest}, indent=1), encoding="utf-8")
         hours = sorted({r[4] for r in ordered})
-        message = (f"ok {now}: {len(ordered)} days from {ordered[0][0]} to {ordered[-1][0]}, {repeats} repeated dates, "
+        message = (f"ok {now} ({'with a key' if KEY else 'keyless'}, {len(pages)} calls): {len(ordered)} days from {ordered[0][0]} to {ordered[-1][0]}, {repeats} repeated dates, "
                    f"stamped at {', '.join(hours[:4])}{' ...' if len(hours) > 4 else ''} UTC; latest {json.dumps(latest.get('data'))[:200]}")
         code = 0
     except Exception as e:  # noqa: BLE001  (the status file must say what went wrong, whatever it was)
