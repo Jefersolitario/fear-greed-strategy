@@ -1,0 +1,405 @@
+{
+ "window": [
+  "2023-06-29",
+  "2026-11-20"
+ ],
+ "days": 1241,
+ "cmc_missing_days": 0,
+ "btc_first_close": 30461.0,
+ "btc_last_close": 58815.0,
+ "correlation": 0.904,
+ "mean_cmc_minus_alt": -0.6,
+ "min": {
+  "cmc": [
+   5.0,
+   "2026-02-06"
+  ],
+  "alt": [
+   5.0,
+   "2026-02-12"
+  ]
+ },
+ "max": {
+  "cmc": [
+   92.0,
+   "2024-03-12"
+  ],
+  "alt": [
+   94.0,
+   "2024-11-22"
+  ]
+ },
+ "days_at_or_below": {
+  "10": {
+   "cmc": 12,
+   "alt": 35,
+   "both": 7
+  },
+  "15": {
+   "cmc": 47,
+   "alt": 100,
+   "both": 43
+  },
+  "20": {
+   "cmc": 92,
+   "alt": 140,
+   "both": 79
+  }
+ },
+ "days_at_or_above_80": {
+  "cmc": 72,
+  "alt": 45
+ },
+ "runs": [
+  {
+   "index": "alt",
+   "rule": "le10_sell80",
+   "buy_days": 35,
+   "put_in": 35000.0,
+   "sales": [],
+   "pnl": -5026.0,
+   "pnl_pct_of_put_in": -14.4,
+   "sharpe": -0.25,
+   "sortino": -0.37,
+   "sharpe_per_dollar": -0.2,
+   "max_dd": 13103.0,
+   "max_at_risk": 40076.0,
+   "open_lots": 35,
+   "open_value": 29974.0,
+   "open_avg_cost": 68609.0,
+   "episodes": [
+    {
+     "from": "2025-02-27",
+     "to": "2025-02-27",
+     "buys": 1,
+     "avg_price": 84625.0
+    },
+    {
+     "from": "2025-11-15",
+     "to": "2025-11-16",
+     "buys": 2,
+     "avg_price": 94857.0
+    },
+    {
+     "from": "2026-02-06",
+     "to": "2026-02-24",
+     "buys": 16,
+     "avg_price": 67806.0
+    },
+    {
+     "from": "2026-03-02",
+     "to": "2026-03-04",
+     "buys": 2,
+     "avg_price": 70746.0
+    },
+    {
+     "from": "2026-03-09",
+     "to": "2026-03-09",
+     "buys": 1,
+     "avg_price": 68529.0
+    },
+    {
+     "from": "2026-03-22",
+     "to": "2026-04-03",
+     "buys": 7,
+     "avg_price": 67839.0
+    },
+    {
+     "from": "2026-06-08",
+     "to": "2026-06-10",
+     "buys": 3,
+     "avg_price": 62068.0
+    },
+    {
+     "from": "2026-11-15",
+     "to": "2026-11-19",
+     "buys": 3,
+     "avg_price": 63979.0
+    }
+   ]
+  },
+  {
+   "index": "cmc_same",
+   "rule": "le10_sell80",
+   "buy_days": 12,
+   "put_in": 12000.0,
+   "sales": [
+    {
+     "date": "2026-08-24",
+     "price": 78977.0
+    }
+   ],
+   "pnl": 939.0,
+   "pnl_pct_of_put_in": 7.8,
+   "sharpe": 0.18,
+   "sortino": 0.27,
+   "sharpe_per_dollar": -0.07,
+   "max_dd": 3299.0,
+   "max_at_risk": 11459.0,
+   "open_lots": 2,
+   "open_value": 1948.0,
+   "open_avg_cost": 60324.0,
+   "episodes": [
+    {
+     "from": "2025-11-22",
+     "to": "2025-11-23",
+     "buys": 2,
+     "avg_price": 85811.0
+    },
+    {
+     "from": "2026-02-06",
+     "to": "2026-02-13",
+     "buys": 8,
+     "avg_price": 68884.0
+    },
+    {
+     "from": "2026-11-19",
+     "to": "2026-11-20",
+     "buys": 2,
+     "avg_price": 60324.0
+    }
+   ]
+  },
+  {
+   "index": "cmc_next",
+   "rule": "le10_sell80",
+   "buy_days": 11,
+   "put_in": 11000.0,
+   "sales": [
+    {
+     "date": "2026-08-25",
+     "price": 78500.0
+    }
+   ],
+   "pnl": 899.0,
+   "pnl_pct_of_put_in": 8.2,
+   "sharpe": 0.17,
+   "sortino": 0.26,
+   "sharpe_per_dollar": -0.04,
+   "max_dd": 3292.0,
+   "max_at_risk": 11433.0,
+   "open_lots": 1,
+   "open_value": 999.0,
+   "open_avg_cost": 58815.0,
+   "episodes": [
+    {
+     "from": "2025-11-23",
+     "to": "2025-11-24",
+     "buys": 2,
+     "avg_price": 87619.0
+    },
+    {
+     "from": "2026-02-07",
+     "to": "2026-02-14",
+     "buys": 8,
+     "avg_price": 68782.0
+    },
+    {
+     "from": "2026-11-20",
+     "to": "2026-11-20",
+     "buys": 1,
+     "avg_price": 58815.0
+    }
+   ]
+  },
+  {
+   "index": "alt",
+   "rule": "le15_sell80",
+   "buy_days": 100,
+   "put_in": 100000.0,
+   "sales": [],
+   "pnl": -15032.0,
+   "pnl_pct_of_put_in": -15.0,
+   "sharpe": -0.28,
+   "sortino": -0.4,
+   "sharpe_per_dollar": -0.2,
+   "max_dd": 37553.0,
+   "max_at_risk": 115521.0,
+   "open_lots": 100,
+   "open_value": 84968.0,
+   "open_avg_cost": 69151.0,
+   "episodes": [
+    {
+     "from": "2025-02-27",
+     "to": "2025-02-27",
+     "buys": 1,
+     "avg_price": 84625.0
+    },
+    {
+     "from": "2025-03-04",
+     "to": "2025-03-04",
+     "buys": 1,
+     "avg_price": 87324.0
+    },
+    {
+     "from": "2025-11-13",
+     "to": "2025-11-26",
+     "buys": 11,
+     "avg_price": 90666.0
+    },
+    {
+     "from": "2025-12-16",
+     "to": "2025-12-16",
+     "buys": 1,
+     "avg_price": 87752.0
+    },
+    {
+     "from": "2026-02-01",
+     "to": "2026-03-15",
+     "buys": 38,
+     "avg_price": 68658.0
+    },
+    {
+     "from": "2026-03-20",
+     "to": "2026-04-13",
+     "buys": 22,
+     "avg_price": 69078.0
+    },
+    {
+     "from": "2026-06-03",
+     "to": "2026-06-13",
+     "buys": 11,
+     "avg_price": 62753.0
+    },
+    {
+     "from": "2026-06-18",
+     "to": "2026-06-19",
+     "buys": 2,
+     "avg_price": 63206.0
+    },
+    {
+     "from": "2026-06-25",
+     "to": "2026-07-01",
+     "buys": 6,
+     "avg_price": 59726.0
+    },
+    {
+     "from": "2026-11-14",
+     "to": "2026-11-20",
+     "buys": 7,
+     "avg_price": 63188.0
+    }
+   ]
+  },
+  {
+   "index": "cmc_same",
+   "rule": "le15_sell80",
+   "buy_days": 47,
+   "put_in": 47000.0,
+   "sales": [
+    {
+     "date": "2026-08-24",
+     "price": 78977.0
+    }
+   ],
+   "pnl": 3795.0,
+   "pnl_pct_of_put_in": 8.1,
+   "sharpe": 0.2,
+   "sortino": 0.31,
+   "sharpe_per_dollar": -0.01,
+   "max_dd": 11673.0,
+   "max_at_risk": 43961.0,
+   "open_lots": 7,
+   "open_value": 6509.0,
+   "open_avg_cost": 63188.0,
+   "episodes": [
+    {
+     "from": "2025-03-11",
+     "to": "2025-03-11",
+     "buys": 1,
+     "avg_price": 82747.0
+    },
+    {
+     "from": "2025-04-09",
+     "to": "2025-04-09",
+     "buys": 1,
+     "avg_price": 82721.0
+    },
+    {
+     "from": "2025-11-18",
+     "to": "2025-11-26",
+     "buys": 8,
+     "avg_price": 87753.0
+    },
+    {
+     "from": "2026-02-02",
+     "to": "2026-03-02",
+     "buys": 25,
+     "avg_price": 68315.0
+    },
+    {
+     "from": "2026-06-06",
+     "to": "2026-06-10",
+     "buys": 5,
+     "avg_price": 62055.0
+    },
+    {
+     "from": "2026-11-14",
+     "to": "2026-11-20",
+     "buys": 7,
+     "avg_price": 63188.0
+    }
+   ]
+  },
+  {
+   "index": "cmc_next",
+   "rule": "le15_sell80",
+   "buy_days": 46,
+   "put_in": 46000.0,
+   "sales": [
+    {
+     "date": "2026-08-25",
+     "price": 78500.0
+    }
+   ],
+   "pnl": 3713.0,
+   "pnl_pct_of_put_in": 8.1,
+   "sharpe": 0.19,
+   "sortino": 0.3,
+   "sharpe_per_dollar": -0.05,
+   "max_dd": 11761.0,
+   "max_at_risk": 44433.0,
+   "open_lots": 6,
+   "open_value": 5593.0,
+   "open_avg_cost": 63035.0,
+   "episodes": [
+    {
+     "from": "2025-03-12",
+     "to": "2025-03-12",
+     "buys": 1,
+     "avg_price": 83630.0
+    },
+    {
+     "from": "2025-04-10",
+     "to": "2025-04-10",
+     "buys": 1,
+     "avg_price": 79559.0
+    },
+    {
+     "from": "2025-11-19",
+     "to": "2025-11-27",
+     "buys": 8,
+     "avg_price": 88119.0
+    },
+    {
+     "from": "2026-02-03",
+     "to": "2026-03-03",
+     "buys": 25,
+     "avg_price": 67940.0
+    },
+    {
+     "from": "2026-06-07",
+     "to": "2026-06-11",
+     "buys": 5,
+     "avg_price": 62595.0
+    },
+    {
+     "from": "2026-11-15",
+     "to": "2026-11-20",
+     "buys": 6,
+     "avg_price": 63035.0
+    }
+   ]
+  }
+ ]
+}
