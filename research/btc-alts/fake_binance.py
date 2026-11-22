@@ -148,6 +148,14 @@ class FakeClient:
                         "askQty": "1"})
         return out
 
+    def depth(self, symbol, limit=100):
+        base = symbol[:-4]
+        hs = 5e-6 if base == "BTC" else self.w.hs[base]
+        size = 50_000.0 if base == "BTC" else self.w.vol_usd[base] / 20000.0      # quote per level
+        bids = [[_f(1 - hs - 1e-4 * k), _f(size / (1 - hs - 1e-4 * k))] for k in range(limit)]
+        asks = [[_f(1 + hs + 1e-4 * k), _f(size / (1 + hs + 1e-4 * k))] for k in range(limit)]
+        return {"lastUpdateId": 1, "bids": bids, "asks": asks}
+
     def ticker_24hr(self):
         return [{"symbol": a + "USDT", "quoteVolume": _f(self.w.vol_usd[a] * 24)} for a in self.w.alts]
 
@@ -161,7 +169,40 @@ class FakeClient:
             return self._k1m(base, start_ms, end_ms, limit)
         if interval == "1h":
             return self._k1h(base, start_ms, end_ms, limit)
+        if interval == "5m":
+            return self._k5m(base, start_ms, end_ms, limit)
         raise ValueError(interval)
+
+    def _k5m(self, base, start_ms, end_ms, limit):
+        """5-minute bars: hourly log prices interpolated, plus a little noise (mechanics only)."""
+        w = self.w
+        if base == "BTC":
+            logp, qvh, lo, hi = w.btc_logp_h, np.full(w.n_h, 2e9), 0, w.n_h
+        elif base in w.alts:
+            logp, qvh = w.alt_logp_h[base], w.alt_qv_h[base]
+            lo, hi = w.listed[base]
+        else:
+            return None
+        step = 5 * MIN
+        a = max(0, -(-(start_ms - H_START) // step), lo * 12)
+        b = min(w.n_h * 12 - 1, (end_ms - H_START) // step, hi * 12 - 1, a + limit - 1)
+        if b < a:
+            return []
+        m = np.arange(a - 1, b + 1)
+        h = m // 12
+        frac = (m % 12 + 1) / 12.0
+        prev = np.where(h > 0, logp[np.maximum(h - 1, 0)], logp[0])
+        noise = np.random.default_rng(zlib.crc32(base.encode()) % 9973).normal(0, 3e-4, w.n_h * 12)
+        lp = prev + frac * (logp[np.minimum(h, w.n_h - 1)] - prev) + np.where(m % 12 == 11, 0.0, noise[np.maximum(m, 0)])
+        px = np.exp(lp)
+        rows = []
+        for i in range(1, len(m)):
+            ot = H_START + int(m[i]) * step
+            o, c = float(px[i - 1]), float(px[i])
+            q = float(qvh[min(int(h[i]), w.n_h - 1)]) / 12.0
+            rows.append([int(ot), _f(o), _f(max(o, c)), _f(min(o, c)), _f(c), _f(q / c), int(ot + step - 1), _f(q), 100,
+                         _f(0.5 * q / c), _f(0.5 * q), "0"])
+        return rows
 
     def _k1s(self, base, start_ms, end_ms, limit):
         w = self.w

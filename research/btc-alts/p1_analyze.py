@@ -2,7 +2,7 @@
 
 Run:  python p1_analyze.py                 all tables, writes out/p1/summary.json
       python p1_analyze.py --table trade   one table (events, cr, share, half, catchup, stale, leadlag, fresh,
-                                           trade, speed, split, spread)
+                                           trade, speed, size, split, spread)
       BTCALTS_TEST=1 python p1_analyze.py  the same on the synthetic market
 One event is one observation: every interval is a bootstrap over events (10,000 draws, fixed seed).
 """
@@ -545,6 +545,48 @@ def table_speed(D):
 
 
 
+def laggard_mask(D, kind, d, tier=None):
+    ev_list = D.events_of(kind)
+    m = ~D.is_btc & np.isin(D.ev, ev_list) & (D.ec["beta"] > 0)
+    if tier is not None:
+        m &= D.ec["tier"] == tier
+    b = D.btc[f"cr_{d}"][D.ev]
+    tgt = PHI * D.ec["beta"] * b
+    lag = ((b < 0) & (D.ec[f"cr_{d}"] > tgt)) if kind == "down" else ((b > 0) & (D.ec[f"cr_{d}"] < tgt))
+    return m & lag & np.isfinite(D.ec[f"edelay_{d}"])
+
+
+def table_size(D):
+    """Trade size: is 1,000 USD (main case) or 10,000 USD (reference) realistic in the seconds after a shock?"""
+    out = {}
+    for kind in ("down", "up"):
+        if len(D.events_of(kind)) == 0:
+            continue
+        print(f"\n## Trade size in the entry second [{kind} events, laggards]. Quote volume that actually traded in the second "
+              f"in which the rule fills, all trades and on the side the rule trades on (taker sells after a down shock)")
+        print("| delay | tier | laggard trades | median USD traded in the entry second | share with at least 1,000 USD | "
+              "at least 10,000 USD | median USD on our side | share with at least 1,000 USD on our side | at least 10,000 USD | "
+              "median seconds from decision to first trade | median USD traded in the 5 s after the decision |")
+        print("|---|---|---|---|---|---|---|---|---|---|---|")
+        for d in ALL_DELAYS:
+            for t in TIERS:
+                m = laggard_mask(D, kind, d, t)
+                if m.sum() == 0:
+                    continue
+                e, x = D.ec[f"eqv_{d}"][m].astype(float), D.ec[f"xqv_{d}"][m].astype(float)
+                x0 = np.where(np.isfinite(x), x, 0.0)
+                o = {"n": int(m.sum()), "median_entry_second_usd": float(np.nanmedian(e)), "share_ge_1k": float(np.mean(e >= 1000)),
+                     "share_ge_10k": float(np.mean(e >= 10000)), "median_side_usd": float(np.nanmedian(x)) if np.isfinite(x).any() else float("nan"),
+                     "side_share_ge_1k": float(np.mean(x0 >= 1000)), "side_share_ge_10k": float(np.mean(x0 >= 10000)),
+                     "median_delay_s": float(np.nanmedian(D.ec[f"edelay_{d}"][m])), "median_qv5_usd": float(np.nanmedian(D.ec[f"qv5_{d}"][m]))}
+                out[f"{kind}|d{d}|tier{t}"] = o
+                print(f"| {d} s | {TIER_NAME[t]} | {o['n']} | {fmt(o['median_entry_second_usd'], 0)} | {fmt(100 * o['share_ge_1k'], 0)}% | "
+                      f"{fmt(100 * o['share_ge_10k'], 0)}% | {fmt(o['median_side_usd'], 0)} | {fmt(100 * o['side_share_ge_1k'], 0)}% | "
+                      f"{fmt(100 * o['side_share_ge_10k'], 0)}% | {fmt(o['median_delay_s'], 0)} | {fmt(o['median_qv5_usd'], 0)} |")
+    return out
+
+
+
 def table_split(D):
     """Choose the best cell on the early events, evaluate it once on the late events."""
     out = {}
@@ -605,7 +647,7 @@ def table_spread(D):
 
 TABLES = {"events": table_events, "cr": table_cr, "share": table_share, "half": table_half, "catchup": table_catchup,
           "stale": table_stale, "leadlag": table_leadlag, "fresh": table_fresh, "trade": table_trade, "speed": table_speed,
-          "split": table_split, "spread": table_spread}
+          "size": table_size, "split": table_split, "spread": table_spread}
 
 
 def main():

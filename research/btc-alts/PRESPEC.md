@@ -169,3 +169,30 @@ small unless you are very fast."** It is tested directly, with these additions (
   while gross results or the faster rows are clearly positive, and a loss of most of the gross edge from
   one bar of delay. Against: a net edge at 1-2 s (Part 1) or on time at hourly bars (Part 2) that survives
   costs, the placebo and the split in time, or no dependence of the result on speed at all.
+
+## Addendum 2, 22 Nov 2026, still before any Part 1 or Part 2 result: trade size
+
+From the owner: a trade is about **1,000 USD** (per leg for pairs). That size is the main case for capacity
+and slippage; 10,000 USD is shown only as a reference line.
+
+- Part 1: for the laggard trades, the quote volume that actually traded in the entry second, in total and
+  on the side the rule trades on, against 1,000 and 10,000 USD.
+- Part 2: 1,000 and 10,000 USD against the quote volume of the thinner leg in the signal bar; and the net
+  results recomputed with the measured cost of crossing today's spot order books with 1,000 and 10,000 USD
+  (median and 75th-percentile coin of each tier, four snapshots, `s2_depth.py`) in place of the assumed
+  half-spreads. The assumed costs stay the primary cost model for the placebo and the inference, because
+  an order-book snapshot of today is not point-in-time for 2021-2026.
+- The 5-minute test keeps the same number of bars as the hourly test (5 days formation, 2.5 days trading).
+  Whether the owner prefers the same calendar windows instead was asked through the coordinator.
+
+## Addendum 3, 22 Nov 2026, still before any Part 1 or Part 2 result: the 5-minute test in two forms
+
+The owner's answer: run both, and keep them apart in the report.
+
+- **5-minute A (same number of bars)**: formation 1,440 bars (5 days), trading 720 bars (2.5 days), rolled every
+  2.5 days. It answers whether a faster strategy has an edge.
+- **5-minute B (same calendar windows)**: formation 60 days, trading 30 days, as in the hourly test, with
+  5-minute bars; trading windows end at the data end. It answers whether finer timing improves the slow trade.
+- Both: the 30 most liquid coins, the most recent 12 months of 5-minute data, top 20 of the 435 pairs, base
+  rule, on time and one bar late. The number of trading windows each rests on is reported.
+- Trials for the deflated Sharpe ratio: hourly 16 + A 4 + B 4 = 24.

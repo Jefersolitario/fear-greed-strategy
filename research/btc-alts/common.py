@@ -243,6 +243,10 @@ class BinanceClient:
     def ticker_24hr(self):
         return self.get("/api/v3/ticker/24hr", weight=80)
 
+    def depth(self, symbol: str, limit: int = 100):
+        """Order book snapshot (bids and asks as [price, quantity] strings)."""
+        return self.get("/api/v3/depth", {"symbol": symbol, "limit": limit}, weight=5 if limit <= 100 else 25)
+
     def klines(self, symbol: str, interval: str, start_ms: int, end_ms: int, limit: int = 1000):
         """Bars with open time in [start_ms, end_ms] (the bar that opens at end_ms is included)."""
         return self.get("/api/v3/klines", {"symbol": symbol, "interval": interval, "startTime": int(start_ms),
@@ -347,36 +351,41 @@ def fetch_1s_window(client, symbol: str, start_ms: int, n_seconds: int) -> dict[
 
 
 # ---- hourly panel ---------------------------------------------------------------------------------------
-def build_hourly_panel(client, symbols: list[str], start_ms: int, end_ms: int, workers: int = 8, log=print):
-    """Hourly open, close and quote volume for the symbols, on the grid [start_ms, end_ms) in hours.
+def build_panel(client, symbols: list[str], interval: str, step_ms: int, start_ms: int, end_ms: int,
+                workers: int = 8, max_gap: int = 6, log=print):
+    """Open, close and quote volume for the symbols on the bar grid [start_ms, end_ms).
 
-    NaN where the pair has no bar. Gaps of at most 6 hours inside a listing are filled with the last close
-    (zero volume); longer gaps stay missing.
+    NaN where the pair has no bar. Gaps of at most max_gap bars inside a listing are filled with the last
+    close (zero volume); longer gaps stay missing.
     """
     from concurrent.futures import ThreadPoolExecutor
-    n_h = (end_ms - start_ms) // HOUR
+    n_h = (end_ms - start_ms) // step_ms
     op = np.full((n_h, len(symbols)), np.nan, np.float32)
     cl = np.full((n_h, len(symbols)), np.nan, np.float32)
     qv = np.full((n_h, len(symbols)), np.nan, np.float32)
     done = [0]
 
     def one(j):
-        k = fetch_klines_range(client, symbols[j], "1h", HOUR, start_ms, end_ms)
-        idx = ((k["open_time"] - start_ms) // HOUR).astype(np.int64)
+        k = fetch_klines_range(client, symbols[j], interval, step_ms, start_ms, end_ms)
+        idx = ((k["open_time"] - start_ms) // step_ms).astype(np.int64)
         ok = (idx >= 0) & (idx < n_h)
         op[idx[ok], j] = k["open"][ok]
         cl[idx[ok], j] = k["close"][ok]
         qv[idx[ok], j] = k["quote_volume"][ok]
         done[0] += 1
         if done[0] % 50 == 0:
-            log(f"  hourly: {done[0]}/{len(symbols)} symbols")
+            log(f"  {interval}: {done[0]}/{len(symbols)} symbols")
         return int(ok.sum())
 
     with ThreadPoolExecutor(workers) as ex:
         counts = list(ex.map(one, range(len(symbols))))
-    filled = fill_short_gaps(op, cl, qv, max_gap=6)
-    return {"symbols": list(symbols), "start_ms": int(start_ms), "n_hours": int(n_h), "open": op, "close": cl,
-            "qv": qv, "bars": counts, "filled": filled}
+    filled = fill_short_gaps(op, cl, qv, max_gap=max_gap)
+    return {"symbols": list(symbols), "start_ms": int(start_ms), "step_ms": int(step_ms), "n_hours": int(n_h),
+            "open": op, "close": cl, "qv": qv, "bars": counts, "filled": filled}
+
+
+def build_hourly_panel(client, symbols: list[str], start_ms: int, end_ms: int, workers: int = 8, log=print):
+    return build_panel(client, symbols, "1h", HOUR, start_ms, end_ms, workers, 6, log)
 
 
 def fill_short_gaps(op, cl, qv, max_gap: int = 6) -> int:
@@ -401,13 +410,15 @@ def fill_short_gaps(op, cl, qv, max_gap: int = 6) -> int:
 def save_panel(panel: dict, path: str) -> str:
     os.makedirs(os.path.dirname(path), exist_ok=True)
     np.savez_compressed(path, symbols=np.array(panel["symbols"]), start_ms=np.int64(panel["start_ms"]),
-                        open=panel["open"], close=panel["close"], qv=panel["qv"])
+                        step_ms=np.int64(panel.get("step_ms", HOUR)), open=panel["open"], close=panel["close"],
+                        qv=panel["qv"])
     return panel_digest(panel)
 
 
 def load_panel(path: str) -> dict:
     z = np.load(path, allow_pickle=False)
     return {"symbols": [str(s) for s in z["symbols"]], "start_ms": int(z["start_ms"]),
+            "step_ms": int(z["step_ms"]) if "step_ms" in z.files else HOUR,
             "n_hours": int(z["close"].shape[0]), "open": z["open"], "close": z["close"], "qv": z["qv"]}
 
 

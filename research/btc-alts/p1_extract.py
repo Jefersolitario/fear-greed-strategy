@@ -187,6 +187,10 @@ def features(cfg, ev, uni, raw):
             ee = nxt_buy[:, k0].copy()
         ee[ee > ks + d + 60] = N
         cols[f"xdelay_{d}"] = np.where(ee < N, ee - (ks + d), np.nan) if do_trades else np.full(nc, np.nan)
+        # size check: quote volume traded in the entry second (all trades), and on the side we would trade on
+        cols[f"eqv_{d}"] = take(qv, np.where(e < N, e, -1)) if do_trades else np.full(nc, np.nan)
+        cols[f"xqv_{d}"] = (take(sq if ev["kind"] == "down" else bq, np.where(ee < N, ee, -1)) if do_trades
+                            else np.full(nc, np.nan))
         for H in HORIZONS:
             if not do_trades:
                 for nm in ("r_vwap", "rb_vwap", "r_exec", "rb_exec"):
@@ -360,7 +364,7 @@ def main():
             ec[k] = v
         elif k == "beta":
             ec[k] = rounded(v, 4)
-        elif k in ("qv30", "qv_pre60", "qv_post60", "qv_post5") or k.startswith("qv5_"):
+        elif k in ("qv30", "qv_pre60", "qv_post60", "qv_post5") or k.startswith(("qv5_", "eqv_", "xqv_")):
             ec[k] = np.round(v).astype(np.float64)
         elif k == "share_sec_traded":
             ec[k] = rounded(v, 3)
