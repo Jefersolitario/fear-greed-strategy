@@ -1,0 +1,46 @@
+legacy vintage: 2018-07-11T10:25:46+00:00 a27df23ba99804b373a939367fce80765df2fbaf
+shape: (38, 10)
+┌───────┬───────────────────────┬────────────────┬─────────────────────────┬─────────┬──────────────────────┬───────────────────────┬────────────────────────┬─────────────────┬──────────────┐
+│ asset ┆ legacy_column         ┆ column         ┆ compared_with           ┆ n_dates ┆ share_differs_gt_1e9 ┆ share_differs_gt_1pct ┆ share_differs_gt_10pct ┆ median_rel_diff ┆ p95_rel_diff │
+│ ---   ┆ ---                   ┆ ---            ┆ ---                     ┆ ---     ┆ ---                  ┆ ---                   ┆ ---                    ┆ ---             ┆ ---          │
+│ str   ┆ str                   ┆ str            ┆ str                     ┆ i64     ┆ f64                  ┆ f64                   ┆ f64                    ┆ f64             ┆ f64          │
+╞═══════╪═══════════════════════╪════════════════╪═════════════════════════╪═════════╪══════════════════════╪═══════════════════════╪════════════════════════╪═════════════════╪══════════════╡
+│ btc   ┆ activeAddresses       ┆ AdrActCnt      ┆ 2020-01-24 vintage      ┆ 2383    ┆ 0.99958              ┆ 0.467058              ┆ 0.000839               ┆ 0.009082        ┆ 0.031009     │
+│ btc   ┆ activeAddresses       ┆ AdrActCnt      ┆ last vintage 2026-05-24 ┆ 2383    ┆ 0.99958              ┆ 0.467058              ┆ 0.000839               ┆ 0.009082        ┆ 0.031009     │
+│ btc   ┆ txCount               ┆ TxCnt          ┆ 2020-01-24 vintage      ┆ 2383    ┆ 0.998741             ┆ 0.514058              ┆ 0.000839               ┆ 0.01045         ┆ 0.034262     │
+│ btc   ┆ txCount               ┆ TxCnt          ┆ last vintage 2026-05-24 ┆ 2383    ┆ 0.998741             ┆ 0.514058              ┆ 0.000839               ┆ 0.01045         ┆ 0.034262     │
+│ btc   ┆ paymentCount          ┆ TxTfrCnt       ┆ 2020-01-24 vintage      ┆ 2383    ┆ 1.0                  ┆ 1.0                   ┆ 0.994964               ┆ 0.327157        ┆ 0.402928     │
+│ btc   ┆ paymentCount          ┆ TxTfrCnt       ┆ last vintage 2026-05-24 ┆ 2383    ┆ 1.0                  ┆ 1.0                   ┆ 0.994964               ┆ 0.327157        ┆ 0.402928     │
+│ btc   ┆ blockCount            ┆ BlkCnt         ┆ 2020-01-24 vintage      ┆ 2383    ┆ 0.000839             ┆ 0.0                   ┆ 0.0                    ┆ 0.0             ┆ 0.0          │
+│ btc   ┆ blockCount            ┆ BlkCnt         ┆ last vintage 2026-05-24 ┆ 2383    ┆ 0.000839             ┆ 0.0                   ┆ 0.0                    ┆ 0.0             ┆ 0.0          │
+│ btc   ┆ fees                  ┆ FeeTotNtv      ┆ 2020-01-24 vintage      ┆ 2383    ┆ 1.0                  ┆ 0.561897              ┆ 0.018464               ┆ 0.011521        ┆ 0.047178     │
+│ btc   ┆ fees                  ┆ FeeTotNtv      ┆ last vintage 2026-05-24 ┆ 2383    ┆ 1.0                  ┆ 0.561897              ┆ 0.018464               ┆ 0.011521        ┆ 0.047178     │
+│ btc   ┆ generatedCoins        ┆ IssTotNtv      ┆ 2020-01-24 vintage      ┆ 2383    ┆ 0.122535             ┆ 0.000839              ┆ 0.0                    ┆ 0.0             ┆ 3.7975e-7    │
+│ btc   ┆ generatedCoins        ┆ IssTotNtv      ┆ last vintage 2026-05-24 ┆ 2383    ┆ 0.122535             ┆ 0.000839              ┆ 0.0                    ┆ 0.0             ┆ 3.7975e-7    │
+│ btc   ┆ price(USD)            ┆ PriceUSD       ┆ 2020-01-24 vintage      ┆ 1897    ┆ 1.0                  ┆ 0.662625              ┆ 0.053769               ┆ 0.018761        ┆ 0.101385     │
+│ btc   ┆ price(USD)            ┆ PriceUSD       ┆ last vintage 2026-05-24 ┆ 1897    ┆ 1.0                  ┆ 0.662625              ┆ 0.053769               ┆ 0.018761        ┆ 0.101385     │
+│ btc   ┆ marketcap(USD)        ┆ CapMrktCurUSD  ┆ 2020-01-24 vintage      ┆ 1897    ┆ 1.0                  ┆ 0.665261              ┆ 0.052715               ┆ 0.018638        ┆ 0.101414     │
+│ btc   ┆ marketcap(USD)        ┆ CapMrktCurUSD  ┆ last vintage 2026-05-24 ┆ 1897    ┆ 1.0                  ┆ 0.665261              ┆ 0.052715               ┆ 0.018638        ┆ 0.101414     │
+│ btc   ┆ averageDifficulty     ┆ DiffMean       ┆ 2020-01-24 vintage      ┆ 2383    ┆ 0.078892             ┆ 0.0                   ┆ 0.0                    ┆ 8.6494e-13      ┆ 0.001627     │
+│ btc   ┆ adjustedTxVolume(USD) ┆ TxTfrValAdjUSD ┆ 2020-01-24 vintage      ┆ 1897    ┆ 1.0                  ┆ 0.998946              ┆ 0.994729               ┆ 0.454393        ┆ 0.724489     │
+│ btc   ┆ txVolume(USD)         ┆ TxTfrValUSD    ┆ 2020-01-24 vintage      ┆ 1897    ┆ 1.0                  ┆ 0.783869              ┆ 0.078545               ┆ 0.02624         ┆ 0.118778     │
+│ eth   ┆ activeAddresses       ┆ AdrActCnt      ┆ 2020-01-24 vintage      ┆ 922     ┆ 1.0                  ┆ 0.970716              ┆ 0.189805               ┆ 0.036516        ┆ 0.171001     │
+│ eth   ┆ activeAddresses       ┆ AdrActCnt      ┆ last vintage 2026-05-24 ┆ 922     ┆ 1.0                  ┆ 0.970716              ┆ 0.189805               ┆ 0.036516        ┆ 0.171001     │
+│ eth   ┆ txCount               ┆ TxCnt          ┆ 2020-01-24 vintage      ┆ 922     ┆ 0.0                  ┆ 0.0                   ┆ 0.0                    ┆ 0.0             ┆ 0.0          │
+│ eth   ┆ txCount               ┆ TxCnt          ┆ last vintage 2026-05-24 ┆ 922     ┆ 0.0                  ┆ 0.0                   ┆ 0.0                    ┆ 0.0             ┆ 0.0          │
+│ eth   ┆ paymentCount          ┆ TxTfrCnt       ┆ 2020-01-24 vintage      ┆ 922     ┆ 1.0                  ┆ 1.0                   ┆ 0.827549               ┆ 0.200942        ┆ 0.405148     │
+│ eth   ┆ paymentCount          ┆ TxTfrCnt       ┆ last vintage 2026-05-24 ┆ 922     ┆ 1.0                  ┆ 1.0                   ┆ 0.827549               ┆ 0.200942        ┆ 0.405148     │
+│ eth   ┆ blockCount            ┆ BlkCnt         ┆ 2020-01-24 vintage      ┆ 922     ┆ 0.0                  ┆ 0.0                   ┆ 0.0                    ┆ 0.0             ┆ 0.0          │
+│ eth   ┆ blockCount            ┆ BlkCnt         ┆ last vintage 2026-05-24 ┆ 922     ┆ 0.0                  ┆ 0.0                   ┆ 0.0                    ┆ 0.0             ┆ 0.0          │
+│ eth   ┆ fees                  ┆ FeeTotNtv      ┆ 2020-01-24 vintage      ┆ 922     ┆ 0.0                  ┆ 0.0                   ┆ 0.0                    ┆ 6.5346e-13      ┆ 1.9092e-12   │
+│ eth   ┆ fees                  ┆ FeeTotNtv      ┆ last vintage 2026-05-24 ┆ 922     ┆ 0.0                  ┆ 0.0                   ┆ 0.0                    ┆ 6.5346e-13      ┆ 1.9092e-12   │
+│ eth   ┆ generatedCoins        ┆ IssTotNtv      ┆ 2020-01-24 vintage      ┆ 922     ┆ 0.0                  ┆ 0.0                   ┆ 0.0                    ┆ 0.0             ┆ 0.0          │
+│ eth   ┆ generatedCoins        ┆ IssTotNtv      ┆ last vintage 2026-05-24 ┆ 922     ┆ 0.0                  ┆ 0.0                   ┆ 0.0                    ┆ 0.0             ┆ 0.0          │
+│ eth   ┆ price(USD)            ┆ PriceUSD       ┆ 2020-01-24 vintage      ┆ 922     ┆ 1.0                  ┆ 0.778742              ┆ 0.119306               ┆ 0.031189        ┆ 0.149519     │
+│ eth   ┆ price(USD)            ┆ PriceUSD       ┆ last vintage 2026-05-24 ┆ 922     ┆ 1.0                  ┆ 0.778742              ┆ 0.119306               ┆ 0.031189        ┆ 0.149519     │
+│ eth   ┆ marketcap(USD)        ┆ CapMrktCurUSD  ┆ 2020-01-24 vintage      ┆ 922     ┆ 1.0                  ┆ 0.775488              ┆ 0.119306               ┆ 0.030936        ┆ 0.149703     │
+│ eth   ┆ marketcap(USD)        ┆ CapMrktCurUSD  ┆ last vintage 2026-05-24 ┆ 922     ┆ 1.0                  ┆ 0.775488              ┆ 0.119306               ┆ 0.030936        ┆ 0.149703     │
+│ eth   ┆ averageDifficulty     ┆ DiffMean       ┆ 2020-01-24 vintage      ┆ 922     ┆ 0.0                  ┆ 0.0                   ┆ 0.0                    ┆ 7.1333e-13      ┆ 3.1028e-12   │
+│ eth   ┆ adjustedTxVolume(USD) ┆ TxTfrValAdjUSD ┆ 2020-01-24 vintage      ┆ 922     ┆ 1.0                  ┆ 0.983731              ┆ 0.876356               ┆ 0.29044         ┆ 0.824043     │
+│ eth   ┆ txVolume(USD)         ┆ TxTfrValUSD    ┆ 2020-01-24 vintage      ┆ 922     ┆ 1.0                  ┆ 0.835141              ┆ 0.171367               ┆ 0.038784        ┆ 0.170956     │
+└───────┴───────────────────────┴────────────────┴─────────────────────────┴─────────┴──────────────────────┴───────────────────────┴────────────────────────┴─────────────────┴──────────────┘

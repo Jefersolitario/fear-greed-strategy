@@ -1,0 +1,11 @@
+upstream pull/3 parent (last upstream bot commit 2022-06-24) on audited chain: yes
+amsi4991/data 178d69344f6adc77b9351b83219845d0cccb096b 2025-06-19T13:35:12+00:00 -> on audited pre-rewrite chain
+Benny2000/data a8b3992aa284b55e5d51d5e896e9284e15a545fc 2025-04-10T13:35:24+00:00 -> on audited pre-rewrite chain
+croque-m/coinmetrics-data c0bfc07cc454d22b062dae62a9e4569eb3044ae9 2024-12-09T10:12:27-08:00 -> own commit(s) on top of audited chain at 5ca7076 2024-12-09T13:30:54+00:00; commits ahead: 3
+c3016229/data 863a990745b7490653792acf04de18994b1e1f15 2024-06-17T14:41:42+00:00 -> on audited pre-rewrite chain
+shivam7207/data 48a09cd6d068a9790e8b8a50592254f556f15518 2024-04-01T13:26:07+00:00 -> on audited pre-rewrite chain
+slowcoder-fastsleeper/data dd9f390e1777f899641fcb134daad21ec5e8721f 2022-09-11T13:09:11+00:00 -> on audited pre-rewrite chain
+li294151664/data c11811c8a74d94088ac71f11702ae0ff1ae2919f 2022-06-14T13:06:34+00:00 -> on audited pre-rewrite chain
+jedsonpinto/data b47f0cb2d1c8f169945374737e05b13e7c82ba44 2021-07-12T13:12:03+00:00 -> on audited pre-rewrite chain
+tmduc90/data f1a36afb962731c387bb03982758ab0103063da5 2026-05-24T13:37:39+00:00 -> on upstream master (post-rewrite)
+giuse88/data f1a36afb962731c387bb03982758ab0103063da5 2026-05-24T13:37:39+00:00 -> on upstream master (post-rewrite)

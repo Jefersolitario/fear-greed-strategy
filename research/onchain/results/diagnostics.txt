@@ -1,0 +1,106 @@
+=== 1. Calibration of the bootstrap p-values (a flat distribution is what a family of true nulls gives) ===
+V: n=204  share below 0.01/0.05/0.10/0.25/0.50/0.75: 0.010 / 0.015 / 0.034 / 0.206 / 0.441 / 0.711
+L: n=90  share below 0.01/0.05/0.10/0.25/0.50/0.75: 0.122 / 0.244 / 0.356 / 0.522 / 0.689 / 0.856
+
+=== 2. Power: minimum detectable slope = 2.8 x HAC s.e. (80% power, nominal two-sided 5%), median over tests ===
+V btc h= 1: median n 2010, sd of the 1-day return 3.20%, minimum detectable slope 0.183% per 1 sd of signal (= 0.057 return-sd; in-sample R2 0.33%)
+V btc h= 7: median n 2007, sd of the 7-day return 8.45%, minimum detectable slope 1.020% per 1 sd of signal (= 0.121 return-sd; in-sample R2 1.46%)
+V btc h=30: median n 1995, sd of the 30-day return 18.36%, minimum detectable slope 3.335% per 1 sd of signal (= 0.182 return-sd; in-sample R2 3.30%)
+V eth h= 1: median n 1775, sd of the 1-day return 4.29%, minimum detectable slope 0.238% per 1 sd of signal (= 0.056 return-sd; in-sample R2 0.31%)
+V eth h= 7: median n 1772, sd of the 7-day return 11.30%, minimum detectable slope 1.387% per 1 sd of signal (= 0.123 return-sd; in-sample R2 1.51%)
+V eth h=30: median n 1761, sd of the 30-day return 24.29%, minimum detectable slope 4.702% per 1 sd of signal (= 0.194 return-sd; in-sample R2 3.75%)
+L btc h= 1: median n 5257, sd of the 1-day return 4.05%, minimum detectable slope 0.157% per 1 sd of signal (= 0.039 return-sd; in-sample R2 0.15%)
+L btc h= 7: median n 5251, sd of the 7-day return 10.81%, minimum detectable slope 0.899% per 1 sd of signal (= 0.083 return-sd; in-sample R2 0.69%)
+L btc h=30: median n 5228, sd of the 30-day return 24.73%, minimum detectable slope 2.954% per 1 sd of signal (= 0.119 return-sd; in-sample R2 1.43%)
+L eth h= 1: median n 3430, sd of the 1-day return 4.85%, minimum detectable slope 0.211% per 1 sd of signal (= 0.044 return-sd; in-sample R2 0.19%)
+L eth h= 7: median n 3424, sd of the 7-day return 13.25%, minimum detectable slope 1.410% per 1 sd of signal (= 0.106 return-sd; in-sample R2 1.13%)
+L eth h=30: median n 3401, sd of the 30-day return 31.20%, minimum detectable slope 5.383% per 1 sd of signal (= 0.173 return-sd; in-sample R2 2.98%)
+
+=== 3. Positive control: 2 days of look-ahead (data of day d known at 00:00 of day d), L-sample metrics, h = 1 ===
+btc AdrActCnt|lvl      t(h=1): feasible d-2  +2.48 | d-1  +2.80 | same-day d   +2.96
+btc AdrActCnt|chg7     t(h=1): feasible d-2  +0.34 | d-1  +1.34 | same-day d   +1.87
+btc AdrBalCnt|lvl      t(h=1): feasible d-2  +1.68 | d-1  +1.59 | same-day d   +1.70
+btc AdrBalCnt|chg7     t(h=1): feasible d-2  -0.35 | d-1  -0.71 | same-day d   -0.23
+btc TxCnt|lvl          t(h=1): feasible d-2  +0.87 | d-1  +1.08 | same-day d   +1.40
+btc TxCnt|chg7         t(h=1): feasible d-2  -0.36 | d-1  +0.28 | same-day d   +1.07
+btc TxTfrCnt|lvl       t(h=1): feasible d-2  +1.16 | d-1  +1.36 | same-day d   +1.64
+btc TxTfrCnt|chg7      t(h=1): feasible d-2  -0.53 | d-1  +0.31 | same-day d   +1.07
+btc FeeTotNtv|lvl      t(h=1): feasible d-2  +2.55 | d-1  +2.51 | same-day d   +2.44
+btc FeeTotNtv|chg7     t(h=1): feasible d-2  +0.21 | d-1  +0.44 | same-day d   +0.38
+btc HashRate|lvl       t(h=1): feasible d-2  +1.09 | d-1  +1.37 | same-day d   +1.43
+btc HashRate|chg7      t(h=1): feasible d-2  +1.26 | d-1  +2.61 | same-day d   +2.72
+btc BlkCnt|lvl         t(h=1): feasible d-2  +2.05 | d-1  +2.93 | same-day d   +3.04
+btc BlkCnt|chg7        t(h=1): feasible d-2  -0.79 | d-1  +0.85 | same-day d   +1.25
+btc CapMVRVCur|lvl     t(h=1): feasible d-2  +3.17 | d-1  +3.05 | same-day d  +10.10
+btc CapMVRVCur|chg7    t(h=1): feasible d-2  +0.01 | d-1  +1.24 | same-day d  +16.95
+btc CapRealUSD|lvl     t(h=1): feasible d-2  +1.33 | d-1  +1.27 | same-day d   +1.83
+btc CapRealUSD|chg7    t(h=1): feasible d-2  +3.08 | d-1  +2.93 | same-day d   +5.93
+btc Puell|lvl          t(h=1): feasible d-2  +2.84 | d-1  +2.91 | same-day d   +7.31
+btc Puell|chg7         t(h=1): feasible d-2  -0.02 | d-1  +2.38 | same-day d  +10.06
+eth AdrBalCnt|lvl      t(h=1): feasible d-2  -0.29 | d-1  -0.26 | same-day d   -0.19
+eth AdrBalCnt|chg7     t(h=1): feasible d-2  +0.36 | d-1  +0.26 | same-day d   +0.53
+eth TxCnt|lvl          t(h=1): feasible d-2  +2.38 | d-1  +2.64 | same-day d   +2.94
+eth TxCnt|chg7         t(h=1): feasible d-2  +1.62 | d-1  +2.26 | same-day d   +2.91
+eth TxTfrCnt|lvl       t(h=1): feasible d-2  +2.32 | d-1  +2.43 | same-day d   +2.88
+eth TxTfrCnt|chg7      t(h=1): feasible d-2  +1.95 | d-1  +2.18 | same-day d   +3.03
+eth FeeTotNtv|lvl      t(h=1): feasible d-2  +1.88 | d-1  +2.11 | same-day d   +1.66
+eth FeeTotNtv|chg7     t(h=1): feasible d-2  +0.76 | d-1  +1.17 | same-day d   +0.25
+eth BlkCnt|lvl         t(h=1): feasible d-2  -1.25 | d-1  -1.21 | same-day d   -1.19
+eth BlkCnt|chg7        t(h=1): feasible d-2  -1.13 | d-1  -1.50 | same-day d   -1.69
+
+=== 4. Hindsight contrast for revised metrics (same decision days; HAC t; real-time value vs today's file) ===
+btc FlowInExNtv|lvl    n=1541  h=1: real-time +0.45 vs today's file -0.17 | h=7: real-time +0.27 vs today's file +0.24 | h=30: real-time -0.38 vs today's file -0.50
+btc FlowInExNtv|chg7   n=1541  h=1: real-time +0.05 vs today's file -0.42 | h=7: real-time -0.59 vs today's file -0.08 | h=30: real-time +0.61 vs today's file +0.89
+btc FlowOutExNtv|lvl   n=1541  h=1: real-time +0.72 vs today's file +0.35 | h=7: real-time +0.43 vs today's file +0.41 | h=30: real-time -1.02 vs today's file -0.40
+btc FlowOutExNtv|chg7  n=1541  h=1: real-time +0.21 vs today's file +0.32 | h=7: real-time +0.14 vs today's file -0.22 | h=30: real-time +0.27 vs today's file +0.68
+btc NetFlowEx|lvl      n=1541  h=1: real-time -0.82 vs today's file -2.31 | h=7: real-time -0.54 vs today's file -1.40 | h=30: real-time +1.12 vs today's file -1.09
+btc NetFlowEx|chg7     n=1541  h=1: real-time -0.62 vs today's file -1.95 | h=7: real-time -1.48 vs today's file -0.16 | h=30: real-time +0.39 vs today's file +0.17
+btc NAIVE today's-file backtest 2012-01-01.. FlowInExNtv|lvl    h=1: t +2.52 (p_hac 0.012) | h=7: t +3.28 (p_hac 0.001) | h=30: t +2.77 (p_hac 0.006)
+btc NAIVE today's-file backtest 2012-01-01.. FlowInExNtv|chg7   h=1: t -0.04 (p_hac 0.971) | h=7: t +0.59 (p_hac 0.555) | h=30: t +1.72 (p_hac 0.086)
+btc NAIVE today's-file backtest 2012-01-01.. FlowOutExNtv|lvl   h=1: t +2.62 (p_hac 0.009) | h=7: t +3.21 (p_hac 0.001) | h=30: t +2.74 (p_hac 0.006)
+btc NAIVE today's-file backtest 2012-01-01.. FlowOutExNtv|chg7  h=1: t +0.10 (p_hac 0.921) | h=7: t +0.41 (p_hac 0.682) | h=30: t +1.58 (p_hac 0.114)
+btc NAIVE today's-file backtest 2012-01-01.. NetFlowEx|lvl      h=1: t +0.17 (p_hac 0.867) | h=7: t +1.01 (p_hac 0.314) | h=30: t +1.25 (p_hac 0.210)
+btc NAIVE today's-file backtest 2012-01-01.. NetFlowEx|chg7     h=1: t -0.25 (p_hac 0.803) | h=7: t +0.89 (p_hac 0.373) | h=30: t +0.91 (p_hac 0.363)
+eth FlowInExNtv|lvl    n=1541  h=1: real-time -0.05 vs today's file -0.31 | h=7: real-time -0.09 vs today's file -0.52 | h=30: real-time +0.01 vs today's file -0.08
+eth FlowInExNtv|chg7   n=1541  h=1: real-time -0.06 vs today's file +0.07 | h=7: real-time -0.69 vs today's file -0.83 | h=30: real-time -0.17 vs today's file -0.61
+eth FlowOutExNtv|lvl   n=1541  h=1: real-time -0.13 vs today's file -0.30 | h=7: real-time -0.20 vs today's file -0.58 | h=30: real-time +0.09 vs today's file -0.02
+eth FlowOutExNtv|chg7  n=1541  h=1: real-time -0.33 vs today's file +0.01 | h=7: real-time -0.77 vs today's file -0.87 | h=30: real-time +0.01 vs today's file -0.53
+eth NetFlowEx|lvl      n=1541  h=1: real-time +0.23 vs today's file +0.11 | h=7: real-time -0.12 vs today's file -0.16 | h=30: real-time +0.30 vs today's file +0.13
+eth NetFlowEx|chg7     n=1541  h=1: real-time +0.81 vs today's file +0.56 | h=7: real-time -0.65 vs today's file -0.68 | h=30: real-time -0.88 vs today's file -0.79
+eth CapMVRVCur|lvl     n=1541  h=1: real-time +0.31 vs today's file +0.21 | h=7: real-time +0.08 vs today's file -0.05 | h=30: real-time +0.17 vs today's file +0.06
+eth CapMVRVCur|chg7    n=1541  h=1: real-time +0.21 vs today's file +0.19 | h=7: real-time +0.04 vs today's file +0.08 | h=30: real-time +1.67 vs today's file +1.75
+eth CapRealUSD|lvl     n=1541  h=1: real-time -1.02 vs today's file -0.77 | h=7: real-time -1.39 vs today's file -1.03 | h=30: real-time -1.83 vs today's file -1.28
+eth CapRealUSD|chg7    n=1541  h=1: real-time +0.38 vs today's file +0.39 | h=7: real-time -0.32 vs today's file -0.17 | h=30: real-time +0.72 vs today's file +0.87
+eth AdrActCnt|lvl      n=2010  h=1: real-time +1.33 vs today's file +1.34 | h=7: real-time +1.19 vs today's file +1.18 | h=30: real-time +1.13 vs today's file +1.12
+eth AdrActCnt|chg7     n=2010  h=1: real-time +1.08 vs today's file +1.07 | h=7: real-time +0.31 vs today's file +0.29 | h=30: real-time -0.29 vs today's file -0.37
+eth NAIVE today's-file backtest 2017-01-01.. FlowInExNtv|lvl    h=1: t +1.72 (p_hac 0.085) | h=7: t +2.26 (p_hac 0.024) | h=30: t +2.20 (p_hac 0.028)
+eth NAIVE today's-file backtest 2017-01-01.. FlowInExNtv|chg7   h=1: t -0.48 (p_hac 0.634) | h=7: t -0.09 (p_hac 0.927) | h=30: t -0.20 (p_hac 0.844)
+eth NAIVE today's-file backtest 2017-01-01.. FlowOutExNtv|lvl   h=1: t +2.06 (p_hac 0.039) | h=7: t +2.71 (p_hac 0.007) | h=30: t +2.56 (p_hac 0.010)
+eth NAIVE today's-file backtest 2017-01-01.. FlowOutExNtv|chg7  h=1: t -0.92 (p_hac 0.359) | h=7: t +0.13 (p_hac 0.894) | h=30: t +0.34 (p_hac 0.731)
+eth NAIVE today's-file backtest 2017-01-01.. NetFlowEx|lvl      h=1: t -0.41 (p_hac 0.685) | h=7: t -1.66 (p_hac 0.097) | h=30: t -1.53 (p_hac 0.126)
+eth NAIVE today's-file backtest 2017-01-01.. NetFlowEx|chg7     h=1: t +1.33 (p_hac 0.184) | h=7: t -0.08 (p_hac 0.939) | h=30: t -1.79 (p_hac 0.073)
+
+=== 5. L-sample placebo: |t| of the circularly shifted signal, by shift length (BTC, h = 7) ===
+CapMVRVCur|lvl: actual t +3.43; shifts 726; share |t|>1.96 0.55; 90-365d: mean t +1.39, max|t| 3.6; 365-730d: mean t -1.72, max|t| 3.0; 730-1095d: mean t -1.75, max|t| 3.6; 1095-1460d: mean t +3.08, max|t| 4.1; 1460-1825d: mean t +0.44, max|t| 2.7; 1825-2555d: mean t -1.15, max|t| 4.4; 2555-3650d: mean t -0.39, max|t| 5.1; 3650-6000d: mean t +0.17, max|t| 4.8
+CapRealUSD|chg7: actual t +3.75; shifts 726; share |t|>1.96 0.28; 90-365d: mean t +0.54, max|t| 3.9; 365-730d: mean t -1.22, max|t| 3.4; 730-1095d: mean t -1.40, max|t| 3.5; 1095-1460d: mean t +1.80, max|t| 3.8; 1460-1825d: mean t +0.46, max|t| 3.1; 1825-2555d: mean t -1.14, max|t| 4.4; 2555-3650d: mean t -0.19, max|t| 4.7; 3650-6000d: mean t -0.07, max|t| 4.2
+FeeTotNtv|lvl: actual t +3.01; shifts 726; share |t|>1.96 0.44; 90-365d: mean t +2.79, max|t| 5.0; 365-730d: mean t -0.56, max|t| 2.4; 730-1095d: mean t -2.16, max|t| 3.6; 1095-1460d: mean t +0.42, max|t| 3.1; 1460-1825d: mean t +2.19, max|t| 4.1; 1825-2555d: mean t -1.86, max|t| 3.9; 2555-3650d: mean t -0.08, max|t| 4.4; 3650-6000d: mean t +0.08, max|t| 4.7
+
+=== 6. Nominal rejections (|t_HAC| > 1.96) per sub-period, all primary tests ===
+V: 2020-2021: 23 of 204; 2022-2023: 16 of 204; 2024..: 10 of 204; whole sample: 4 of 204
+L: ..2020: 32 of 90; 2021-2023: 3 of 90; 2024..: 1 of 90; whole sample: 24 of 90
+
+=== 7. Independent recomputation (pandas rolling + statsmodels HAC) of three headline numbers ===
+L btc CapMVRVCur|lvl h=7: independent b 1.0400% t 3.432 n 5251 | pipeline b 1.0400% t 3.432 n 5251
+L btc CapRealUSD|chg7 h=7: independent b 1.5484% t 3.748 n 5251 | pipeline b 1.5484% t 3.748 n 5251
+L btc FeeTotNtv|lvl h=7: independent b 0.7153% t 3.008 n 5251 | pipeline b 0.7153% t 3.008 n 5251
+L btc FeeTotNtv|lvl h=30: independent b 3.3519% t 3.317 n 5228 | pipeline b 3.3519% t 3.317 n 5228
+
+=== 8. Non-overlapping periods: every h-th decision day, heteroskedasticity-robust (White) t, median over the h phases ===
+V btc h= 7: 36 signals; median number of non-overlapping periods 286; signals with median |t| > 1.96: 1; largest median |t| 2.39
+V btc h=30: 36 signals; median number of non-overlapping periods 66; signals with median |t| > 1.96: 0; largest median |t| 1.75
+V eth h= 7: 32 signals; median number of non-overlapping periods 253; signals with median |t| > 1.96: 0; largest median |t| 1.37
+V eth h=30: 32 signals; median number of non-overlapping periods 58; signals with median |t| > 1.96: 0; largest median |t| 1.52
+L btc h= 7: 20 signals; median number of non-overlapping periods 750; signals with median |t| > 1.96: 5; largest median |t| 3.15
+L btc h=30: 20 signals; median number of non-overlapping periods 174; signals with median |t| > 1.96: 5; largest median |t| 3.11
+L eth h= 7: 10 signals; median number of non-overlapping periods 489; signals with median |t| > 1.96: 3; largest median |t| 2.08
+L eth h=30: 10 signals; median number of non-overlapping periods 113; signals with median |t| > 1.96: 0; largest median |t| 1.52

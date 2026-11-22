@@ -1,0 +1,125 @@
+--- 3ade350  2026-11-22T15:37:47+04:00  Hindsight audit outputs and pre-registration of the predictive tests (no return data touched yet)
+
+ .gitignore                                    |    4 +
+ PREREG.md                                     |  145 +++++
+ audit/audit_bulk_restatements.csv             |  147 +++++
+ audit/audit_legacy_2018_vs_later.csv          |   39 ++
+ audit/audit_metric_stats.csv                  |  308 ++++++++++
+ audit/header_inventory.json                   | 1096 +++++++++++++++++++++++++++++++++++
+ audit/pass1/btc_cells.parquet                 |  Bin 0 -> 11051355 bytes
+ audit/pass1/btc_change_events.parquet         |  Bin 0 -> 1142936 bytes
+ audit/pass1/btc_commit_metric_summary.parquet |  Bin 0 -> 228331 bytes
+ audit/pass1/btc_commits.parquet               |  Bin 0 -> 61602 bytes
+ audit/pass1/btc_metrics.parquet               |  Bin 0 -> 3167 bytes
+ audit/pass1/eth_cells.parquet                 |  Bin 0 -> 6951626 bytes
+ audit/pass1/eth_change_events.parquet         |  Bin 0 -> 1233779 bytes
+ audit/pass1/eth_commit_metric_summary.parquet |  Bin 0 -> 211659 bytes
+ audit/pass1/eth_commits.parquet               |  Bin 0 -> 61572 bytes
+ audit/pass1/eth_metrics.parquet               |  Bin 0 -> 3152 bytes
+ audit/vintage_index.tsv                       | 2013 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ logs/a0_header_inventory.log                  |   90 +++
+ logs/a1_vintage_pass_btc.log                  |   12 +
+ logs/a1_vintage_pass_eth.log                  |   12 +
+ logs/a2_audit_stats.log                       |   13 +
+ logs/a3_legacy_2018_check.log                 |   46 ++
+ logs/a4_fork_crosscheck.log                   |   11 +
+ scripts/a0_header_inventory.py                |   55 ++
+ scripts/a1_vintage_pass.py                    |  112 ++++
+ scripts/a2_audit_stats.py                     |  125 ++++
+ scripts/a3_legacy_2018_check.py               |   56 ++
+ scripts/a4_fork_crosscheck.sh                 |   23 +
+ scripts/cmgit.py                              |   65 +++
+ 29 files changed, 4372 insertions(+)
+--- 7b257c3  2026-11-22T15:54:36+04:00  Panels, signal code, estimation helpers and their tests; bootstrap design replaced after failing its size check on simulated data (no real-data test run yet)
+
+ data/btc_final_raw.parquet       | Bin 0 -> 483740 bytes
+ data/btc_panel_L.parquet         | Bin 0 -> 3887336 bytes
+ data/btc_panel_L0.parquet        | Bin 0 -> 1244890 bytes
+ data/btc_panel_V.parquet         | Bin 0 -> 2474506 bytes
+ data/btc_vintage_signals.parquet | Bin 0 -> 2059138 bytes
+ data/eth_final_raw.parquet       | Bin 0 -> 325133 bytes
+ data/eth_panel_L.parquet         | Bin 0 -> 1358012 bytes
+ data/eth_panel_L0.parquet        | Bin 0 -> 526511 bytes
+ data/eth_panel_V.parquet         | Bin 0 -> 2051167 bytes
+ data/eth_vintage_signals.parquet | Bin 0 -> 1761027 bytes
+ logs/b1_build_panels.log         |  14 ++++
+ logs/test_stats.log              |   0
+ results/check_panels.txt         | 109 +++++++++++++++++++++++++++++
+ scripts/b1_build_panels.py       | 124 +++++++++++++++++++++++++++++++++
+ scripts/c1_check_panels.py       |  66 ++++++++++++++++++
+ scripts/config.py                |  41 +++++++++++
+ scripts/signals.py               | 143 ++++++++++++++++++++++++++++++++++++++
+ scripts/stats.py                 | 296 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ tests/test_signals.py            |  30 ++++++++
+ tests/test_stats.py              | 104 ++++++++++++++++++++++++++++
+ 20 files changed, 927 insertions(+)
+--- a53626d  2026-11-22T15:59:07+04:00  Regression script (B2), committed before its first run
+
+ scripts/b2_regressions.py | 110 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 110 insertions(+)
+--- fddc02f  2026-11-22T16:03:20+04:00  B2 regression results; B3 (OOS, rules) and B4 (beyond price) scripts committed before their first run
+
+ logs/b2_regressions_btc.log |  63 ++++++++++
+ logs/b2_regressions_eth.log |  51 ++++++++
+ logs/test_stats.log         |  19 +++
+ results/regressions_eth.csv | 559 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ scripts/b3_oos_rules.py     | 137 +++++++++++++++++++++
+ scripts/b4_beyond_price.py  |  80 ++++++++++++
+ 6 files changed, 909 insertions(+)
+--- 1bea39b  2026-11-22T16:20:35+04:00  All result files, summary, diagnostics, reproduction scripts
+
+ audit/audit_restatement_direction.txt |  12 ++
+ audit/audit_table.md                  |  89 +++++++++
+ logs/b2_regressions_btc.log           |   2 +
+ logs/b3_oos_rules_btc.log             |   3 +
+ logs/b3_oos_rules_eth.log             |   3 +
+ logs/b4_beyond_price_btc.log          |  29 +++
+ logs/b4_beyond_price_eth.log          |  22 +++
+ logs/b5_summary.log                   |  70 +++++++
+ logs/c2_diagnostics.log               | 106 +++++++++++
+ logs/c3_lead_check.log                |  61 ++++++
+ logs/c4_rerun_check.log               |   1 +
+ requirements.txt                      |   7 +
+ results/beyond_price_btc.csv          | 169 +++++++++++++++++
+ results/beyond_price_eth.csv          | 127 +++++++++++++
+ results/diagnostics.txt               | 106 +++++++++++
+ results/fdr_summary.csv               |   7 +
+ results/lead_check.txt                |  61 ++++++
+ results/oos_btc.csv                   | 193 +++++++++++++++++++
+ results/oos_eth.csv                   | 151 +++++++++++++++
+ results/regressions_btc.csv           | 757 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ results/rules_btc.csv                 |  65 +++++++
+ results/rules_eth.csv                 |  51 +++++
+ results/summary.txt                   |  70 +++++++
+ results/summary_rules.csv             | 115 ++++++++++++
+ results/summary_tests.csv             | 295 +++++++++++++++++++++++++++++
+ run_all.sh                            |  32 ++++
+ scripts/a00_fetch_history.sh          |  38 ++++
+ scripts/a4_fork_crosscheck.sh         |   0
+ scripts/a5_audit_table.py             |  46 +++++
+ scripts/a6_restatement_direction.py   |  37 ++++
+ scripts/b5_summary.py                 | 159 ++++++++++++++++
+ scripts/c2_diagnostics.py             | 175 +++++++++++++++++
+ scripts/c3_lead_check.py              |  59 ++++++
+ scripts/c4_rerun_check.sh             |  11 ++
+ 34 files changed, 3129 insertions(+)
+--- c1f0d29  2026-11-22T16:29:28+04:00  Final scripts, diagnostics and logs
+
+ audit/audit_restatement_direction.txt |  2 ++
+ logs/c4_rerun_check.log               |  4 +++-
+ scripts/a6_restatement_direction.py   | 14 ++++++++++++++
+ 3 files changed, 19 insertions(+), 1 deletion(-)
+--- 9aabe6f  2026-11-22T16:53:02+04:00  Logs of the end-to-end re-run (all data, audit and result files byte-identical)
+
+ logs/a1_vintage_pass_btc.log |  20 ++++++-------
+ logs/a1_vintage_pass_eth.log |  20 ++++++-------
+ logs/a2_audit_stats.log      |   2 ++
+ logs/b1_build_panels.log     |  18 ++++++------
+ logs/b2_regressions_btc.log  | 130 +++++++++++++++++++++++++++++++++++++++++------------------------------------------
+ logs/b2_regressions_eth.log  | 102 ++++++++++++++++++++++++++++++++---------------------------------
+ logs/b3_oos_rules_eth.log    |   4 +--
+ logs/b4_beyond_price_btc.log |   6 ++--
+ logs/b4_beyond_price_eth.log |   2 +-
+ logs/run_all.log             |   4 +++
+ logs/test_stats.log          |   6 ++--
+ 11 files changed, 160 insertions(+), 154 deletions(-)

@@ -1,0 +1,109 @@
+===== btc: V-sample decision days 2020-01-25 .. 2026-05-23 (2311 calendar days)
+  data age of TxCnt at decision time (days; 2 = normal, >9 = dropped as stale, 12 = 12 or more): 2:1999, 3:25, 4:4, 5:3, 6:3, 7:3, 8:1, 9:1, 10:1, 11:1, 12:270
+  as-of (V) signal vs the same signal rebuilt from today's file, on days with normal data age (2):
+    metric|variant                 n     share|diff|>1e-6  share|diff|>0.25sd  mean|diff|   corr
+    AdrActCnt|lvl                 1999     0.0000            0.0000          0.0000   1.0000
+    AdrActCnt|chg7                1999     0.0000            0.0000          0.0000   1.0000
+    AdrBalCnt|lvl                 1537     0.0000            0.0000          0.0000   1.0000
+    AdrBalCnt|chg7                1537     0.0000            0.0000          0.0000   1.0000
+    TxCnt|lvl                     1999     0.0000            0.0000          0.0000   1.0000
+    TxCnt|chg7                    1999     0.0000            0.0000          0.0000   1.0000
+    TxTfrCnt|lvl                  1999     0.0000            0.0000          0.0000   1.0000
+    TxTfrCnt|chg7                 1999     0.0000            0.0000          0.0000   1.0000
+    FeeTotNtv|lvl                 1999     0.0000            0.0000          0.0000   1.0000
+    FeeTotNtv|chg7                1999     0.0000            0.0000          0.0000   1.0000
+    HashRate|lvl                  1998     0.0000            0.0000          0.0000   1.0000
+    HashRate|chg7                 1998     0.0000            0.0000          0.0000   1.0000
+    BlkCnt|lvl                    1999     0.0000            0.0000          0.0000   1.0000
+    BlkCnt|chg7                   1999     0.0000            0.0000          0.0000   1.0000
+    CapMVRVCur|lvl                1999     0.0000            0.0000          0.0000   1.0000
+    CapMVRVCur|chg7               1999     0.0000            0.0000          0.0000   1.0000
+    CapRealUSD|lvl                1999     0.0000            0.0000          0.0000   1.0000
+    CapRealUSD|chg7               1999     0.0000            0.0000          0.0000   1.0000
+    Puell|lvl                     1999     0.0000            0.0000          0.0000   1.0000
+    Puell|chg7                    1999     0.0000            0.0000          0.0000   1.0000
+    FlowInExNtv|lvl               1535     0.9785            0.5993          0.3799   0.9013
+    FlowInExNtv|chg7              1535     0.9792            0.3720          0.2944   0.9000
+    FlowOutExNtv|lvl              1535     0.9779            0.6052          0.4770   0.8468
+    FlowOutExNtv|chg7             1535     0.9792            0.5785          0.4833   0.7883
+    NetFlowEx|lvl                 1535     0.9779            0.6573          0.7192   0.4874
+    NetFlowEx|chg7                1535     0.9792            0.6443          0.7657   0.4391
+  usable observations in the V-sample (signal and 1-day return present): first .. last, n
+    AdrActCnt        2020-01-25 .. 2026-05-23  n=2039
+    AdrBalCnt        2021-05-08 .. 2026-05-23  n=1570
+    TxCnt            2020-01-25 .. 2026-05-23  n=2039
+    TxTfrCnt         2020-01-25 .. 2026-05-23  n=2039
+    FeeTotNtv        2020-01-25 .. 2026-05-23  n=2039
+    HashRate         2020-01-25 .. 2026-05-23  n=2039
+    BlkCnt           2020-01-25 .. 2026-05-23  n=2039
+    CapMVRVCur       2020-01-25 .. 2026-05-23  n=2039
+    CapRealUSD       2020-01-25 .. 2026-05-23  n=2039
+    Puell            2020-01-25 .. 2026-05-23  n=2039
+    FlowInExNtv      2021-05-08 .. 2026-05-23  n=1570
+    FlowOutExNtv     2021-05-08 .. 2026-05-23  n=1570
+    NetFlowEx        2021-05-08 .. 2026-05-23  n=1570
+    NVTAdj           2020-01-25 .. 2025-06-27  n=1981
+    NVTAdj90         2020-01-25 .. 2025-06-27  n=1981
+    TxTfrValAdjUSD   2020-01-25 .. 2025-06-27  n=1981
+    SplyActPct1yr    2021-05-08 .. 2025-06-27  n=1512
+    VelCur1yr        2021-05-08 .. 2025-06-27  n=1512
+  usable observations in the L-sample (signal and 1-day return present): first .. last, n
+    AdrActCnt        2012-01-01 .. 2026-05-23  n=5257
+    AdrBalCnt        2012-01-01 .. 2026-05-23  n=5257
+    TxCnt            2012-01-01 .. 2026-05-23  n=5257
+    TxTfrCnt         2012-01-01 .. 2026-05-23  n=5257
+    FeeTotNtv        2012-01-01 .. 2026-05-23  n=5257
+    HashRate         2012-01-01 .. 2026-05-23  n=5257
+    BlkCnt           2012-01-01 .. 2026-05-23  n=5257
+    CapMVRVCur       2012-01-01 .. 2026-05-23  n=5257
+    CapRealUSD       2012-01-01 .. 2026-05-23  n=5257
+    Puell            2012-03-09 .. 2026-05-23  n=5189
+===== eth: V-sample decision days 2020-01-25 .. 2026-05-23 (2311 calendar days)
+  data age of TxCnt at decision time (days; 2 = normal, >9 = dropped as stale, 12 = 12 or more): 2:1998, 3:26, 4:4, 5:3, 6:3, 7:3, 8:1, 9:1, 10:1, 11:1, 12:270
+  as-of (V) signal vs the same signal rebuilt from today's file, on days with normal data age (2):
+    metric|variant                 n     share|diff|>1e-6  share|diff|>0.25sd  mean|diff|   corr
+    AdrActCnt|lvl                 1997     0.4617            0.0000          0.0037   1.0000
+    AdrActCnt|chg7                1997     0.4662            0.0000          0.0020   1.0000
+    AdrBalCnt|lvl                 1536     0.0000            0.0000          0.0000   1.0000
+    AdrBalCnt|chg7                1536     0.0000            0.0000          0.0000   1.0000
+    TxCnt|lvl                     1998     0.0000            0.0000          0.0000   1.0000
+    TxCnt|chg7                    1998     0.0000            0.0000          0.0000   1.0000
+    TxTfrCnt|lvl                  1998     0.0000            0.0000          0.0000   1.0000
+    TxTfrCnt|chg7                 1998     0.0000            0.0000          0.0000   1.0000
+    FeeTotNtv|lvl                 1998     0.0000            0.0000          0.0000   1.0000
+    FeeTotNtv|chg7                1998     0.0000            0.0000          0.0000   1.0000
+    BlkCnt|lvl                    1998     0.0000            0.0000          0.0000   1.0000
+    BlkCnt|chg7                   1998     0.0000            0.0000          0.0000   1.0000
+    CapMVRVCur|lvl                1535     0.7336            0.1068          0.1274   0.9954
+    CapMVRVCur|chg7               1535     0.7322            0.0502          0.0452   0.9941
+    CapRealUSD|lvl                1535     0.7094            0.1980          0.2075   0.9492
+    CapRealUSD|chg7               1535     0.7121            0.1459          0.1184   0.9636
+    FlowInExNtv|lvl               1536     0.1921            0.1823          0.1045   0.9719
+    FlowInExNtv|chg7              1536     0.1921            0.0592          0.0385   0.9909
+    FlowOutExNtv|lvl              1536     0.1940            0.1595          0.1119   0.9653
+    FlowOutExNtv|chg7             1536     0.1940            0.0892          0.0766   0.9636
+    NetFlowEx|lvl                 1535     0.7264            0.0678          0.0753   0.9532
+    NetFlowEx|chg7                1535     0.7296            0.0554          0.0863   0.9279
+  usable observations in the V-sample (signal and 1-day return present): first .. last, n
+    AdrActCnt        2020-01-25 .. 2026-05-23  n=2039
+    AdrBalCnt        2021-05-08 .. 2026-05-23  n=1570
+    TxCnt            2020-01-25 .. 2026-05-23  n=2039
+    TxTfrCnt         2020-01-25 .. 2026-05-23  n=2039
+    FeeTotNtv        2020-01-25 .. 2026-05-23  n=2039
+    BlkCnt           2020-01-25 .. 2026-05-23  n=2039
+    CapMVRVCur       2021-05-08 .. 2026-05-23  n=1570
+    CapRealUSD       2021-05-08 .. 2026-05-23  n=1570
+    FlowInExNtv      2021-05-08 .. 2026-05-23  n=1570
+    FlowOutExNtv     2021-05-08 .. 2026-05-23  n=1570
+    NetFlowEx        2021-05-08 .. 2026-05-23  n=1570
+    NVTAdj           2020-01-25 .. 2025-06-27  n=1981
+    NVTAdj90         2020-01-25 .. 2025-06-27  n=1981
+    TxTfrValAdjUSD   2020-01-25 .. 2025-06-27  n=1981
+    SplyActPct1yr    2021-05-08 .. 2025-06-27  n=1512
+    VelCur1yr        2021-05-08 .. 2025-06-27  n=1512
+  usable observations in the L-sample (signal and 1-day return present): first .. last, n
+    AdrBalCnt        2017-01-01 .. 2026-05-23  n=3430
+    TxCnt            2017-01-01 .. 2026-05-23  n=3430
+    TxTfrCnt         2017-01-01 .. 2026-05-23  n=3430
+    FeeTotNtv        2017-01-01 .. 2026-05-23  n=3430
+    BlkCnt           2017-01-01 .. 2026-05-23  n=3430

@@ -1,0 +1,12 @@
+eth commit 0/2003 2020-01-24T15:50:17+00:00 cols=38 events=0 t=0s
+eth commit 200/2003 2020-08-11T13:08:33+00:00 cols=40 events=0 t=3s
+eth commit 400/2003 2021-03-01T13:09:55+00:00 cols=40 events=0 t=7s
+eth commit 600/2003 2021-09-26T13:06:40+00:00 cols=141 events=87 t=19s
+eth commit 800/2003 2022-04-17T13:08:55+00:00 cols=142 events=3,979 t=36s
+eth commit 1000/2003 2022-11-08T13:12:23+00:00 cols=144 events=3,991 t=52s
+eth commit 1200/2003 2023-05-27T13:24:10+00:00 cols=144 events=3,991 t=69s
+eth commit 1400/2003 2023-12-14T13:28:37+00:00 cols=144 events=4,293 t=86s
+eth commit 1600/2003 2024-07-06T13:28:00+00:00 cols=145 events=105,526 t=104s
+eth commit 1800/2003 2025-01-28T13:32:50+00:00 cols=145 events=105,759 t=122s
+eth commit 2000/2003 2026-05-22T13:38:19+00:00 cols=31 events=108,307 t=136s
+eth: 2003 commits, 153 metrics, 108,307 cell changes, 137s

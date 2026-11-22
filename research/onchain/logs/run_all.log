@@ -1,0 +1,4 @@
+commits indexed: 2013; last upstream commit: f1a36afb962731c387bb03982758ab0103063da5 2026-05-24T13:37:39+00:00
+OK: 572 (metric, variant, date) values agree, max abs diff 5.09e-12
+done
+full pipeline re-run end to end on 2026-11-22 (bash run_all.sh): every file under audit/, data/ and results/ byte-identical to the first run (git status showed only timing lines in logs/ as changed)

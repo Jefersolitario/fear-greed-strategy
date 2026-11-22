@@ -1,0 +1,14 @@
+btc as-of signals: commit 0/2004 2020-01-24T15:50:17+00:00 t=0s
+btc as-of signals: commit 400/2004 2021-02-27T13:09:59+00:00 t=6s
+btc as-of signals: commit 800/2004 2022-04-16T13:06:03+00:00 t=17s
+btc as-of signals: commit 1200/2004 2023-05-26T13:23:50+00:00 t=28s
+btc as-of signals: commit 1600/2004 2024-07-05T13:27:25+00:00 t=40s
+btc as-of signals: commit 2000/2004 2026-05-21T13:37:11+00:00 t=51s
+btc: panels written, 51s
+eth as-of signals: commit 0/2003 2020-01-24T15:50:17+00:00 t=0s
+eth as-of signals: commit 400/2003 2021-03-01T13:09:55+00:00 t=3s
+eth as-of signals: commit 800/2003 2022-04-17T13:08:55+00:00 t=10s
+eth as-of signals: commit 1200/2003 2023-05-27T13:24:10+00:00 t=18s
+eth as-of signals: commit 1600/2003 2024-07-06T13:28:00+00:00 t=27s
+eth as-of signals: commit 2000/2003 2026-05-22T13:38:19+00:00 t=37s
+eth: panels written, 37s

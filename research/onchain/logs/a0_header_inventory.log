@@ -1,0 +1,90 @@
+===== btc final header: time,AdrActCnt,AdrBalCnt,AssetCompletionTime,AssetEODCompletionTime,BlkCnt,CapMVRVCur,CapMrktCurUSD,CapMrktEstUSD,FeeTotNtv,FlowInExNtv,FlowInExUSD,FlowOutExNtv,FlowOutExUSD,HashRate,IssTotNtv,IssTotUSD,PriceBTC,PriceUSD,ROI1yr,ROI30d,ReferenceRate,ReferenceRateETH,ReferenceRateEUR,ReferenceRateUSD,SplyCur,SplyExNtv,SplyExUSD,SplyExpFut10yr,TxCnt,TxTfrCnt,volume_reported_spot_usd_1d
+2018-06-15T09:50:29+00:00 fork_wds/master ncols 13 nrows 3444 size 380081 last 2018-06-14
+   +  activeAddresses,averageDifficulty,date,exchangeVolume(USD),fees,generatedCoins,marketcap(USD),medianFee,medianTxValue(USD),paymentCount,price(USD),txCount,txVolume(USD)
+   -  
+2018-06-27T14:54:33+00:00 fork_wds/master ncols 14 nrows 3456 size 415868 last 2018-06-26
+   +  adjustedTxVolume(USD)
+   -  
+2018-07-11T10:25:46+00:00 fork_wds/master ncols 16 nrows 3470 size 421449 last 2018-07-10
+   +  blockCount,blockSize
+   -  
+2020-01-24T15:50:17+00:00 fork_wds/master ncols 41 nrows 4038 size 2518836 last 2020-01-23
+   +  AdrActCnt,BlkCnt,BlkSizeByte,BlkSizeMeanByte,CapMVRVCur,CapMrktCurUSD,CapRealUSD,DiffMean,FeeMeanNtv,FeeMeanUSD,FeeMedNtv,FeeMedUSD,FeeTotNtv,FeeTotUSD,HashRate,IssContNtv,IssContPctAnn,IssContUSD,IssTotNtv,IssTotUSD,NVTAdj,NVTAdj90,PriceBTC,PriceUSD,ROI1yr,ROI30d,SplyCur,TxCnt,TxTfrCnt,TxTfrValAdjNtv,TxTfrValAdjUSD,TxTfrValMeanNtv,TxTfrValMeanUSD,TxTfrValMedNtv,TxTfrValMedUSD,TxTfrValNtv,TxTfrValUSD,VtyDayRet180d,VtyDayRet30d,VtyDayRet60d,time
+   -  activeAddresses,adjustedTxVolume(USD),averageDifficulty,blockCount,blockSize,date,exchangeVolume(USD),fees,generatedCoins,marketcap(USD),medianFee,medianTxValue(USD),paymentCount,price(USD),txCount,txVolume(USD)
+2020-06-30T13:08:20+00:00 fork_wds/master ncols 43 nrows 4196 size 2748820 last 2020-06-29
+   +  SplyExpFut10yrCMBI,SplyFF
+   -  
+2021-04-13T13:10:04+00:00 fork_wds/master ncols 44 nrows 4483 size 3023276 last 2021-04-12
+   +  AssetEODCompletionTime
+   -  
+2021-05-07T13:10:58+00:00 fork_wds/master ncols 139 nrows 4507 size 8827783 last 2021-05-06
+   -  BlkSizeByte,SplyExpFut10yrCMBI,TxTfrValNtv,TxTfrValUSD,VtyDayRet60d
+2021-05-12T13:10:51+00:00 fork_wds/master ncols 140 nrows 4512 size 8890058 last 2021-05-11
+   +  NVTAdjFF
+   -  
+2021-08-02T15:21:23+00:00 fork_wds/master ncols 143 nrows 4595 size 8892981 last 2021-08-02
+   +  ReferenceRate,ReferenceRateEUR,ReferenceRateUSD
+   -  
+2021-11-10T13:06:53+00:00 fork_wds/master ncols 144 nrows 4695 size 9159021 last 2021-11-10
+   +  ReferenceRateETH
+   -  
+2022-08-06T13:09:25+00:00 fork_wds/master ncols 145 nrows 4964 size 9843097 last 2022-08-06
+   +  CapMrktEstUSD
+   -  
+2022-10-20T13:11:01+00:00 fork_wds/master ncols 146 nrows 5039 size 10021933 last 2022-10-20
+   +  principal_market_price_usd
+   -  
+2022-11-08T13:12:23+00:00 fork_wds/master ncols 147 nrows 5058 size 10075943 last 2022-11-08
+   +  principal_market_usd
+   -  
+2024-02-07T13:30:05+00:00 fork_wds/master ncols 148 nrows 5514 size 11193877 last 2024-02-07
+   +  AssetCompletionTime
+   -  
+2026-03-26T14:44:35-04:00 master ncols 32 nrows 6291 size 2396226 last 2026-03-25
+   +  SplyExNtv,SplyExUSD,volume_reported_spot_usd_1d
+   -  AdrBal1in100KCnt,AdrBal1in100MCnt,AdrBal1in10BCnt,AdrBal1in10KCnt,AdrBal1in10MCnt,AdrBal1in1BCnt,AdrBal1in1KCnt,AdrBal1in1MCnt,AdrBalNtv0.001Cnt,AdrBalNtv0.01Cnt,AdrBalNtv0.1Cnt,AdrBalNtv100Cnt,AdrBalNtv100KCnt,AdrBalNtv10Cnt,AdrBalNtv10KCnt,AdrBalNtv1Cnt,AdrBalNtv1KCnt,AdrBalNtv1MCnt,AdrBalUSD100Cnt,AdrBalUSD100KCnt,AdrBalUSD10Cnt,AdrBalUSD10KCnt,AdrBalUSD10MCnt,AdrBalUSD1Cnt,AdrBalUSD1KCnt,AdrBalUSD1MCnt,BlkSizeMeanByte,BlkWghtMean,BlkWghtTot,CapAct1yrUSD,CapMVRVFF,CapMrktFFUSD,CapRealUSD,DiffLast,DiffMean,FeeByteMeanNtv,FeeMeanNtv,FeeMeanUSD,FeeMedNtv,FeeMedUSD,FeeTotUSD,FlowTfrFromExCnt,HashRate30d,IssContNtv,IssContPctAnn,IssContPctDay,IssContUSD,NDF,NVTAdj,NVTAdj90,NVTAdjFF,NVTAdjFF90,RevAllTimeUSD,RevHashNtv,RevHashRateNtv,RevHashRateUSD,RevHashUSD,RevNtv,RevUSD,SER,SplyAct10yr,SplyAct180d,SplyAct1d,SplyAct1yr,SplyAct2yr,SplyAct30d,SplyAct3yr,SplyAct4yr,SplyAct5yr,SplyAct7d,SplyAct90d,SplyActEver,SplyActPct1yr,SplyAdrBal1in100K,SplyAdrBal1in100M,SplyAdrBal1in10B,SplyAdrBal1in10K,SplyAdrBal1in10M,SplyAdrBal1in1B,SplyAdrBal1in1K,SplyAdrBal1in1M,SplyAdrBalNtv0.001,SplyAdrBalNtv0.01,SplyAdrBalNtv0.1,SplyAdrBalNtv1,SplyAdrBalNtv10,SplyAdrBalNtv100,SplyAdrBalNtv100K,SplyAdrBalNtv10K,SplyAdrBalNtv1K,SplyAdrBalNtv1M,SplyAdrBalUSD1,SplyAdrBalUSD10,SplyAdrBalUSD100,SplyAdrBalUSD100K,SplyAdrBalUSD10K,SplyAdrBalUSD10M,SplyAdrBalUSD1K,SplyAdrBalUSD1M,SplyAdrTop100,SplyAdrTop10Pct,SplyAdrTop1Pct,SplyFF,SplyMiner0HopAllNtv,SplyMiner0HopAllUSD,SplyMiner1HopAllNtv,SplyMiner1HopAllUSD,TxCntSec,TxTfrValAdjNtv,TxTfrValAdjUSD,TxTfrValMeanNtv,TxTfrValMeanUSD,TxTfrValMedNtv,TxTfrValMedUSD,VelCur1yr,VtyDayRet180d,VtyDayRet30d,principal_market_price_usd,principal_market_usd
+===== eth final header: time,AdrActCnt,AdrBalCnt,AssetCompletionTime,AssetEODCompletionTime,BlkCnt,CapMVRVCur,CapMrktCurUSD,CapMrktEstUSD,FeeTotNtv,FlowInExNtv,FlowInExUSD,FlowOutExNtv,FlowOutExUSD,HashRate,IssTotNtv,IssTotUSD,PriceBTC,PriceUSD,ROI1yr,ROI30d,ReferenceRate,ReferenceRateBTC,ReferenceRateEUR,ReferenceRateUSD,SplyCur,SplyExNtv,SplyExUSD,SplyExpFut10yr,TxCnt,TxTfrCnt,volume_reported_spot_usd_1d
+2018-06-15T09:50:29+00:00 fork_wds/master ncols 13 nrows 1051 size 148089 last 2018-06-14
+   +  activeAddresses,averageDifficulty,date,exchangeVolume(USD),fees,generatedCoins,marketcap(USD),medianFee,medianTxValue(USD),paymentCount,price(USD),txCount,txVolume(USD)
+   -  
+2018-06-27T14:54:33+00:00 fork_wds/master ncols 14 nrows 1063 size 158746 last 2018-06-26
+   +  adjustedTxVolume(USD)
+   -  
+2018-07-11T10:25:46+00:00 fork_wds/master ncols 16 nrows 1077 size 181118 last 2018-07-10
+   +  blockCount,blockSize
+   -  
+2020-01-24T15:50:17+00:00 fork_wds/master ncols 39 nrows 1639 size 1204138 last 2020-01-23
+   +  AdrActCnt,BlkCnt,BlkSizeByte,BlkSizeMeanByte,CapMrktCurUSD,DiffMean,FeeMeanNtv,FeeMeanUSD,FeeMedNtv,FeeMedUSD,FeeTotNtv,FeeTotUSD,HashRate,IssContNtv,IssContPctAnn,IssContUSD,IssTotNtv,IssTotUSD,NVTAdj,NVTAdj90,PriceBTC,PriceUSD,ROI1yr,ROI30d,SplyCur,TxCnt,TxTfrCnt,TxTfrValAdjNtv,TxTfrValAdjUSD,TxTfrValMeanNtv,TxTfrValMeanUSD,TxTfrValMedNtv,TxTfrValMedUSD,TxTfrValNtv,TxTfrValUSD,VtyDayRet180d,VtyDayRet30d,VtyDayRet60d,time
+   -  activeAddresses,adjustedTxVolume(USD),averageDifficulty,blockCount,blockSize,date,exchangeVolume(USD),fees,generatedCoins,marketcap(USD),medianFee,medianTxValue(USD),paymentCount,price(USD),txCount,txVolume(USD)
+2020-06-30T13:08:20+00:00 fork_wds/master ncols 41 nrows 1797 size 1412314 last 2020-06-29
+   +  SplyExpFut10yrCMBI,SplyFF
+   -  
+2021-04-13T13:10:04+00:00 fork_wds/master ncols 42 nrows 2084 size 1673864 last 2021-04-12
+   +  AssetEODCompletionTime
+   -  
+2021-05-07T13:10:58+00:00 fork_wds/master ncols 138 nrows 2108 size 5725697 last 2021-05-06
+   -  BlkSizeByte,SplyExpFut10yrCMBI,TxTfrValNtv,TxTfrValUSD,VtyDayRet60d
+2021-05-12T13:10:51+00:00 fork_wds/master ncols 139 nrows 2113 size 5765323 last 2021-05-11
+   +  NVTAdjFF
+   -  
+2021-08-02T15:21:23+00:00 fork_wds/master ncols 142 nrows 2196 size 5943474 last 2021-08-02
+   +  ReferenceRate,ReferenceRateEUR,ReferenceRateUSD
+   -  
+2021-11-10T13:06:53+00:00 fork_wds/master ncols 143 nrows 2296 size 6275921 last 2021-11-10
+   +  ReferenceRateBTC
+   -  
+2022-08-06T13:09:25+00:00 fork_wds/master ncols 144 nrows 2565 size 7092610 last 2022-08-06
+   +  CapMrktEstUSD
+   -  
+2022-10-31T13:11:55+00:00 fork_wds/master ncols 145 nrows 2651 size 7338403 last 2022-10-31
+   +  principal_market_price_usd
+   -  
+2022-11-08T13:12:23+00:00 fork_wds/master ncols 146 nrows 2659 size 7367821 last 2022-11-08
+   +  principal_market_usd
+   -  
+2024-02-07T13:30:05+00:00 fork_wds/master ncols 147 nrows 3115 size 8659268 last 2024-02-07
+   +  AssetCompletionTime
+   -  
+2026-03-26T14:44:35-04:00 master ncols 32 nrows 3892 size 2088053 last 2026-03-25
+   +  SplyExNtv,SplyExUSD,volume_reported_spot_usd_1d
+   -  AdrBal1in100KCnt,AdrBal1in100MCnt,AdrBal1in10BCnt,AdrBal1in10KCnt,AdrBal1in10MCnt,AdrBal1in1BCnt,AdrBal1in1KCnt,AdrBal1in1MCnt,AdrBalNtv0.001Cnt,AdrBalNtv0.01Cnt,AdrBalNtv0.1Cnt,AdrBalNtv100Cnt,AdrBalNtv100KCnt,AdrBalNtv10Cnt,AdrBalNtv10KCnt,AdrBalNtv1Cnt,AdrBalNtv1KCnt,AdrBalNtv1MCnt,AdrBalUSD100Cnt,AdrBalUSD100KCnt,AdrBalUSD10Cnt,AdrBalUSD10KCnt,AdrBalUSD10MCnt,AdrBalUSD1Cnt,AdrBalUSD1KCnt,AdrBalUSD1MCnt,BlkSizeMeanByte,CapAct1yrUSD,CapMVRVFF,CapMrktFFUSD,CapRealUSD,DiffLast,DiffMean,FeeByteMeanNtv,FeeMeanNtv,FeeMeanUSD,FeeMedNtv,FeeMedUSD,FeeTotUSD,FlowTfrFromExCnt,GasLmtBlk,GasLmtBlkMean,GasLmtTx,GasLmtTxMean,GasUsedTx,GasUsedTxMean,IssContNtv,IssContPctAnn,IssContPctDay,IssContUSD,NDF,NVTAdj,NVTAdj90,NVTAdjFF,NVTAdjFF90,RevAllTimeUSD,RevHashNtv,RevHashRateNtv,RevHashRateUSD,RevHashUSD,RevNtv,RevUSD,SER,SplyAct10yr,SplyAct180d,SplyAct1d,SplyAct1yr,SplyAct2yr,SplyAct30d,SplyAct3yr,SplyAct4yr,SplyAct5yr,SplyAct7d,SplyAct90d,SplyActEver,SplyActPct1yr,SplyAdrBal1in100K,SplyAdrBal1in100M,SplyAdrBal1in10B,SplyAdrBal1in10K,SplyAdrBal1in10M,SplyAdrBal1in1B,SplyAdrBal1in1K,SplyAdrBal1in1M,SplyAdrBalNtv0.001,SplyAdrBalNtv0.01,SplyAdrBalNtv0.1,SplyAdrBalNtv1,SplyAdrBalNtv10,SplyAdrBalNtv100,SplyAdrBalNtv100K,SplyAdrBalNtv10K,SplyAdrBalNtv1K,SplyAdrBalNtv1M,SplyAdrBalUSD1,SplyAdrBalUSD10,SplyAdrBalUSD100,SplyAdrBalUSD100K,SplyAdrBalUSD10K,SplyAdrBalUSD10M,SplyAdrBalUSD1K,SplyAdrBalUSD1M,SplyAdrTop100,SplyAdrTop10Pct,SplyAdrTop1Pct,SplyFF,TxCntSec,TxTfrValAdjNtv,TxTfrValAdjUSD,TxTfrValMeanNtv,TxTfrValMeanUSD,TxTfrValMedNtv,TxTfrValMedUSD,VelCur1yr,VtyDayRet180d,VtyDayRet30d,principal_market_price_usd,principal_market_usd

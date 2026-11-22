@@ -1,0 +1,15 @@
+/home/claude/research/onchain/.venv/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:4609: RuntimeWarning: invalid value encountered in scalar subtract
+  diff_b_a = b - a
+shape: (6, 3)
+┌───────┬─────────────────────────────────┬─────┐
+│ asset ┆ class                           ┆ len │
+│ ---   ┆ ---                             ┆ --- │
+│ str   ┆ str                             ┆ u32 │
+╞═══════╪═════════════════════════════════╪═════╡
+│ btc   ┆ first-published/vintage only    ┆ 10  │
+│ btc   ┆ safe                            ┆ 134 │
+│ btc   ┆ unusable (under 3y of real-tim… ┆ 10  │
+│ eth   ┆ first-published/vintage only    ┆ 78  │
+│ eth   ┆ safe                            ┆ 58  │
+│ eth   ┆ unusable (under 3y of real-tim… ┆ 17  │
+└───────┴─────────────────────────────────┴─────┘

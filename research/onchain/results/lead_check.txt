@@ -1,0 +1,61 @@
+=== 1. V family: BH-adjusted q of the Clark-West p-values (204 tests) ===
+  btc SplyActPct1yr|chg7 h=7: OOS R2 3.74% CW p 0.0005 q 0.082 | vs price-only: R2 3.90% CW p 0.0003 q 0.035 | in-sample p_boot 0.0054 (q in family 0.99)
+  btc SplyActPct1yr|chg7 h=1: OOS R2 0.84% CW p 0.0008 q 0.082 | vs price-only: R2 0.89% CW p 0.0003 q 0.035 | in-sample p_boot 0.0098 (q in family 0.99)
+  btc TxTfrValAdjUSD|chg7 h=30: OOS R2 1.42% CW p 0.0104 q 0.704 | vs price-only: R2 0.76% CW p 0.0689 q 0.997 | in-sample p_boot 0.0324 (q in family 0.99)
+  btc CapMVRVCur|chg7 h=30: OOS R2 0.93% CW p 0.0314 q 0.999 | vs price-only: R2 -0.07% CW p 0.6994 q 0.997 | in-sample p_boot 0.2094 (q in family 0.99)
+  btc NVTAdj|chg7 h=30: OOS R2 0.73% CW p 0.0783 q 0.999 | vs price-only: R2 0.47% CW p 0.1576 q 0.997 | in-sample p_boot 0.1228 (q in family 0.99)
+
+=== 2. Placebo for the out-of-sample R2 (signal circularly shifted by 90, 97, ... days) ===
+  btc SplyActPct1yr|chg7 h=1: actual OOS R2 0.84%; placebo median -0.15%, 95th pct 0.23%, max 1.26%; placebo p 0.0104 (191 shifts); Bonferroni x204 = 1.00
+  btc SplyActPct1yr|chg7 h=7: actual OOS R2 3.74%; placebo median -0.88%, 95th pct 1.10%, max 4.57%; placebo p 0.0104 (191 shifts); Bonferroni x204 = 1.00
+  btc TxTfrValAdjUSD|chg7 h=30: actual OOS R2 1.42%; placebo median -0.43%, 95th pct 1.22%, max 3.35%; placebo p 0.0386 (258 shifts); Bonferroni x204 = 1.00
+
+=== 3. The same metric under the other transforms and on ETH (V-sample, HAC t) ===
+  btc SplyActPct1yr|chg1       h= 1 n=1512 b=-0.049% t=-0.55 p_hac=0.585
+  btc SplyActPct1yr|chg1       h= 7 n=1512 b=+0.757% t=+2.57 p_hac=0.010
+  btc SplyActPct1yr|chg1       h=30 n=1512 b=+1.334% t=+1.36 p_hac=0.174
+  btc SplyActPct1yr|chg30      h= 1 n=1512 b=+0.066% t=+1.02 p_hac=0.310
+  btc SplyActPct1yr|chg30      h= 7 n=1512 b=+0.488% t=+1.26 p_hac=0.209
+  btc SplyActPct1yr|chg30      h=30 n=1512 b=+1.252% t=+0.85 p_hac=0.393
+  btc SplyActPct1yr|chg7       h= 1 n=1512 b=+0.179% t=+2.72 p_hac=0.007 p_boot=0.010
+  btc SplyActPct1yr|chg7       h= 7 n=1512 b=+1.089% t=+3.11 p_hac=0.002 p_boot=0.005
+  btc SplyActPct1yr|chg7       h=30 n=1512 b=+1.991% t=+1.57 p_hac=0.117 p_boot=0.182
+  btc SplyActPct1yr|chg7_z180  h= 1 n=1512 b=+0.186% t=+2.80 p_hac=0.005
+  btc SplyActPct1yr|chg7_z180  h= 7 n=1512 b=+1.177% t=+3.08 p_hac=0.002
+  btc SplyActPct1yr|chg7_z180  h=30 n=1512 b=+1.690% t=+1.31 p_hac=0.190
+  btc SplyActPct1yr|chg7_z730  h= 1 n=1512 b=+0.242% t=+3.52 p_hac=0.000
+  btc SplyActPct1yr|chg7_z730  h= 7 n=1512 b=+1.380% t=+3.80 p_hac=0.000
+  btc SplyActPct1yr|chg7_z730  h=30 n=1512 b=+2.975% t=+2.10 p_hac=0.036
+  btc SplyActPct1yr|lvl        h= 1 n=1512 b=+0.019% t=+0.38 p_hac=0.706 p_boot=0.701
+  btc SplyActPct1yr|lvl        h= 7 n=1512 b=+0.117% t=+0.38 p_hac=0.701 p_boot=0.725
+  btc SplyActPct1yr|lvl        h=30 n=1512 b=+0.672% t=+0.56 p_hac=0.576 p_boot=0.643
+  btc SplyActPct1yr|lvl_z180   h= 1 n=1512 b=+0.072% t=+1.52 p_hac=0.129
+  btc SplyActPct1yr|lvl_z180   h= 7 n=1512 b=+0.455% t=+1.54 p_hac=0.124
+  btc SplyActPct1yr|lvl_z180   h=30 n=1512 b=+1.582% t=+1.35 p_hac=0.177
+  btc SplyActPct1yr|lvl_z730   h= 1 n=1512 b=+0.021% t=+0.38 p_hac=0.703
+  btc SplyActPct1yr|lvl_z730   h= 7 n=1512 b=+0.137% t=+0.38 p_hac=0.702
+  btc SplyActPct1yr|lvl_z730   h=30 n=1512 b=+0.726% t=+0.45 p_hac=0.651
+  eth SplyActPct1yr|chg1       h= 1 n=1512 b=+0.128% t=+0.87 p_hac=0.384
+  eth SplyActPct1yr|chg1       h= 7 n=1512 b=+0.533% t=+1.43 p_hac=0.151
+  eth SplyActPct1yr|chg1       h=30 n=1512 b=-0.039% t=-0.04 p_hac=0.968
+  eth SplyActPct1yr|chg30      h= 1 n=1512 b=-0.007% t=-0.09 p_hac=0.927
+  eth SplyActPct1yr|chg30      h= 7 n=1512 b=-0.063% t=-0.14 p_hac=0.890
+  eth SplyActPct1yr|chg30      h=30 n=1512 b=-0.795% t=-0.44 p_hac=0.657
+  eth SplyActPct1yr|chg7       h= 1 n=1512 b=+0.105% t=+1.06 p_hac=0.291 p_boot=0.304
+  eth SplyActPct1yr|chg7       h= 7 n=1512 b=+0.177% t=+0.31 p_hac=0.757 p_boot=0.784
+  eth SplyActPct1yr|chg7       h=30 n=1512 b=-0.594% t=-0.39 p_hac=0.697 p_boot=0.724
+  eth SplyActPct1yr|chg7_z180  h= 1 n=1512 b=+0.115% t=+1.16 p_hac=0.245
+  eth SplyActPct1yr|chg7_z180  h= 7 n=1512 b=+0.283% t=+0.55 p_hac=0.583
+  eth SplyActPct1yr|chg7_z180  h=30 n=1512 b=+0.188% t=+0.12 p_hac=0.906
+  eth SplyActPct1yr|chg7_z730  h= 1 n=1512 b=+0.138% t=+1.16 p_hac=0.245
+  eth SplyActPct1yr|chg7_z730  h= 7 n=1512 b=+0.014% t=+0.02 p_hac=0.982
+  eth SplyActPct1yr|chg7_z730  h=30 n=1512 b=+0.573% t=+0.21 p_hac=0.835
+  eth SplyActPct1yr|lvl        h= 1 n=1512 b=-0.026% t=-0.26 p_hac=0.792 p_boot=0.792
+  eth SplyActPct1yr|lvl        h= 7 n=1512 b=-0.329% t=-0.53 p_hac=0.595 p_boot=0.632
+  eth SplyActPct1yr|lvl        h=30 n=1512 b=+0.112% t=+0.04 p_hac=0.968 p_boot=0.972
+  eth SplyActPct1yr|lvl_z180   h= 1 n=1512 b=-0.071% t=-0.77 p_hac=0.444
+  eth SplyActPct1yr|lvl_z180   h= 7 n=1512 b=-0.796% t=-1.49 p_hac=0.137
+  eth SplyActPct1yr|lvl_z180   h=30 n=1512 b=-2.386% t=-1.03 p_hac=0.305
+  eth SplyActPct1yr|lvl_z730   h= 1 n=1512 b=-0.008% t=-0.06 p_hac=0.949
+  eth SplyActPct1yr|lvl_z730   h= 7 n=1512 b=-0.214% t=-0.26 p_hac=0.798
+  eth SplyActPct1yr|lvl_z730   h=30 n=1512 b=+0.405% t=+0.12 p_hac=0.901
