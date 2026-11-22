@@ -418,8 +418,7 @@ def trade_pnls(D, kind, d, H, price="assumed", hedged=False, tier=None, laggards
     b = D.btc[f"cr_{d}"][D.ev]
     moved = D.ec[f"cr_{d}"].astype(float)
     target = PHI * D.ec["beta"] * b
-    lag = (b * sign > 0) & (moved * sign < target * sign) if True else None
-    # down: b<0, laggard if moved > target (less negative). up: b>0, laggard if moved < target.
+    # down: Bitcoin has fallen (b < 0) and the coin has done less than PHI of beta x b. up: the mirror.
     if kind == "down":
         lag = (b < 0) & (moved > target)
     else:
@@ -645,6 +644,32 @@ def table_spread(D):
     return out
 
 
+def write_event_summary(D):
+    """One row per event: Bitcoin's path and the mean path of each tier (bps from t*-60 s). The compact per-event table."""
+    lags = (0, 1, 2, 5, 15, 60, 300, 900, 3600)
+    per = {}
+    for kind in ("down", "up", "random"):
+        ev = D.events_of(kind)
+        for t in TIERS:
+            for tau in lags:
+                v = D.tier_event_mean(ln(tau), t, kind)
+                for e, x in zip(ev, v):
+                    per[(e, t, tau)] = x
+    n_coins = np.bincount(D.ev[~D.is_btc], minlength=len(D.ev_ids))
+    path = os.path.join(P1, "event_summary.csv")
+    with open(path, "w", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["event_id", "kind", "utc", "btc_r60_bps_at_trigger", "coins"] + [f"btc_cr_{tau}" for tau in lags]
+                   + [f"tier{t}_cr_{tau}" for t in TIERS for tau in lags] + ["btc_half_time_60s"])
+        for i, e in enumerate(D.ev_ids):
+            r = D.events[e]
+            r60 = float(r["r60"]) * 1e4 if r["r60"] not in ("nan", "") else float("nan")
+            w.writerow([e, r["kind"], r["utc"], f"{r60:.1f}", int(n_coins[i])] + [f"{D.btc[ln(tau)][i]:.1f}" for tau in lags]
+                       + [f"{per.get((i, t, tau), float('nan')):.1f}" for t in TIERS for tau in lags] + [f"{D.btc['thalf60'][i]:.0f}"])
+    return path
+
+
+
 TABLES = {"events": table_events, "cr": table_cr, "share": table_share, "half": table_half, "catchup": table_catchup,
           "stale": table_stale, "leadlag": table_leadlag, "fresh": table_fresh, "trade": table_trade, "speed": table_speed,
           "size": table_size, "split": table_split, "spread": table_spread}
@@ -662,6 +687,7 @@ def main():
         D.rng = np.random.default_rng(C.SEED + 10 + sorted(TABLES).index(name))   # each table has its own fixed seed
         summary[name] = fn(D)
     if not args.table:
+        print(f"\nwrote {write_event_summary(D)}")
         with open(os.path.join(P1, "summary.json"), "w") as f:
             json.dump(summary, f, indent=1, sort_keys=True, default=C._jsonable)
             f.write("\n")
