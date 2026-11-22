@@ -357,4 +357,4 @@
 | 5mB dist e2.0 | late | -7.2 | -6.7 | -6.9 | -7.1 | -7.7 |
 | 5mB dist e2.0 | ontime | -7.2 | -6.7 | -6.9 | -7.1 | -7.7 |
 
-wrote /home/runner/work/fear-greed-strategy/fear-greed-strategy/research/btc-alts/out/p2/summary.json
+wrote /home/claude/research/btc-alts/repo/research/btc-alts/out/p2/summary.json
