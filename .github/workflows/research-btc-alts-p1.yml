@@ -1,0 +1,64 @@
+name: research-btc-alts-p1
+
+# Research only: public market data, no API key, no orders. Part 1: 1-second windows around the Bitcoin
+# shock events for the point-in-time top 100, reduced to compact tables. Runs only on the research branch.
+on:
+  push:
+    branches: ["claude/research-btc-alts"]
+    paths:
+      - "research/btc-alts/p1_extract.py"
+      - ".github/workflows/research-btc-alts-p1.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: research-btc-alts-p1
+  cancel-in-progress: true
+
+jobs:
+  run:
+    if: github.ref == 'refs/heads/claude/research-btc-alts'
+    runs-on: ubuntu-latest
+    timeout-minutes: 345
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install
+        run: pip install -r research/btc-alts/requirements.txt
+      - name: Restore raw 1-second windows (never committed)
+        uses: actions/cache/restore@v4
+        with:
+          path: research/btc-alts/cache/raw1s
+          key: btc-alts-raw1s-v1-${{ github.run_id }}
+          restore-keys: btc-alts-raw1s-v1-
+      - name: Extract
+        working-directory: research/btc-alts
+        env:
+          BTCALTS_BUDGET_MIN: "270"
+        run: python p1_extract.py
+      - name: Save raw 1-second windows
+        if: always() && hashFiles('research/btc-alts/cache/raw1s/*.npz') != ''
+        uses: actions/cache/save@v4
+        with:
+          path: research/btc-alts/cache/raw1s
+          key: btc-alts-raw1s-v1-${{ github.run_id }}
+      - name: Statistics
+        working-directory: research/btc-alts
+        run: python p1_analyze.py > out/p1/tables.md
+      - name: Commit compact outputs
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add research/btc-alts/out/p1 || true
+          if git diff --cached --quiet; then echo "nothing to commit"; exit 0; fi
+          git commit -m "research(btc-alts): Part 1 compact tables (event study, lead-lag, lag trade)" \
+                     -m "Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>
+          Claude-Session: https://claude.ai/code/session_01P1dahfAEk7SjXso6WjuRK2"
+          for i in 1 2 3 4 5; do
+            git pull --rebase origin claude/research-btc-alts && git push origin HEAD:claude/research-btc-alts && break
+            sleep $((i * 5))
+          done

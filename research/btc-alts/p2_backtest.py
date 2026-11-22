@@ -287,7 +287,10 @@ def load_funding(client, needed: dict[str, set], path: str):
         blob = client.bulk(f"/data/futures/um/monthly/fundingRate/{perp}/{perp}-fundingRate-{month}.zip")
         if blob is None:
             return None
-        text = C.unzip_single_csv(blob)
+        try:
+            text = C.unzip_single_csv(blob)
+        except Exception:  # noqa: BLE001  (a damaged archive counts as a missing month)
+            return None
         if head_seen[0] is None:
             head_seen[0] = text[:200]
         return parse_funding_csv(text)

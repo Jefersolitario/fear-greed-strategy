@@ -1,0 +1,75 @@
+name: research-btc-alts-p2
+
+# Research only: public market data, no API key, no orders. Part 2: walk-forward pair trading after costs
+# (hourly and 5-minute bars), random-pair placebo, shock-reversion test. Runs only on the research branch.
+on:
+  push:
+    branches: ["claude/research-btc-alts"]
+    paths:
+      - "research/btc-alts/p2_backtest.py"
+      - ".github/workflows/research-btc-alts-p2.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: research-btc-alts-p2
+  cancel-in-progress: true
+
+jobs:
+  run:
+    if: github.ref == 'refs/heads/claude/research-btc-alts'
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install
+        run: pip install -r research/btc-alts/requirements.txt
+      - name: Restore the hourly panel (never committed)
+        uses: actions/cache/restore@v4
+        with:
+          path: research/btc-alts/cache/hourly_panel.npz
+          key: btc-alts-hourly-v1-${{ github.run_id }}
+          restore-keys: btc-alts-hourly-v1-
+      - name: Restore the 5-minute panel and funding history (never committed)
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            research/btc-alts/cache/panel_5m.npz
+            research/btc-alts/cache/funding.npz
+          key: btc-alts-p2-v1-${{ github.run_id }}
+          restore-keys: btc-alts-p2-v1-
+      - name: Checks of the engine against independent references
+        working-directory: research/btc-alts
+        run: python selfcheck.py
+      - name: Backtest
+        working-directory: research/btc-alts
+        run: python p2_backtest.py
+      - name: Save the 5-minute panel and funding history
+        if: always() && hashFiles('research/btc-alts/cache/panel_5m.npz') != ''
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            research/btc-alts/cache/panel_5m.npz
+            research/btc-alts/cache/funding.npz
+          key: btc-alts-p2-v1-${{ github.run_id }}
+      - name: Inference
+        working-directory: research/btc-alts
+        run: python p2_analyze.py > out/p2/tables.md
+      - name: Commit compact outputs
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add research/btc-alts/out/p2 || true
+          if git diff --cached --quiet; then echo "nothing to commit"; exit 0; fi
+          git commit -m "research(btc-alts): Part 2 compact results (pair trading walk-forward, placebo, shock test)" \
+                     -m "Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>
+          Claude-Session: https://claude.ai/code/session_01P1dahfAEk7SjXso6WjuRK2"
+          for i in 1 2 3 4 5; do
+            git pull --rebase origin claude/research-btc-alts && git push origin HEAD:claude/research-btc-alts && break
+            sleep $((i * 5))
+          done
