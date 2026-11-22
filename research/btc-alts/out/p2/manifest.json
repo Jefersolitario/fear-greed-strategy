@@ -6,27 +6,29 @@
  ],
  "file_sizes": {
   "allpairs.parquet": 2025276,
-  "daily_1h.csv.gz": 531582,
+  "daily_1h.csv.gz": 658177,
   "daily_5mA.csv.gz": 34948,
   "daily_5mB.csv.gz": 21554,
-  "placebo_1h.csv.gz": 659780,
+  "manifest.json": 8364,
+  "placebo_1h.csv.gz": 824855,
   "placebo_5mA.csv.gz": 96025,
   "placebo_5mB.csv.gz": 70626,
-  "placebo_mean_daily_1h.csv.gz": 341347,
+  "placebo_mean_daily_1h.csv.gz": 424469,
   "placebo_mean_daily_5mA.csv.gz": 16443,
   "placebo_mean_daily_5mB.csv.gz": 13711,
-  "selected_pairs.csv.gz": 254252,
-  "shock_events.csv.gz": 118411,
-  "trades.csv.gz": 596563,
-  "windows.csv.gz": 43341
+  "selected_pairs.csv.gz": 315730,
+  "shock_events.csv.gz": 187777,
+  "summary.json": 84773,
+  "tables.md": 21659,
+  "trades.csv.gz": 738252,
+  "windows.csv.gz": 49096
  },
  "five_minute_start": "2025-11-22T00:00:00Z",
  "five_minute_symbols": 108,
  "five_minute_windows_A": 144,
  "five_minute_windows_B": 10,
  "funding": {
-  "sample_head": "calc_time,funding_interval_hours,last_funding_rate\n1738368000000,4,0.00005000\n1738382400000,4,0.00005000\n1738396800000,4,0.00005000\n1738411200000,4,0.00005000\n1738425600000,4,0.00005000\n1738440000000,",
-  "source": "download",
+  "source": "cache",
   "status": "ok",
   "symbols_with_funding": 456
  },
@@ -506,27 +508,22 @@
  "hourly_windows": 69,
  "meta": {
   "api_stats": {
-   "bulk_calls": 10549,
-   "bulk_status": {
-    "200": 8608,
-    "404": 1941
-   },
-   "calls": 10462,
-   "max_used_weight_1m": 3000,
+   "bulk_calls": 0,
+   "bulk_status": {},
+   "calls": 0,
+   "max_used_weight_1m": 0,
    "retries": 0,
-   "status": {
-    "200": 10462
-   },
-   "weight": 20924
+   "status": {},
+   "weight": 0
   },
-  "git_sha": "7ce119c5dbdc9358a698a0e10bf3d3570a5dee02",
+  "git_sha": "c5854cb2d6c3e6f3659e85f15a49450cafed6b88",
   "numpy": "2.5.5",
   "python": "3.13.18",
   "refused": {},
-  "run_id": "45020976703",
-  "utc": "2026-11-22T12:32:41Z"
+  "run_id": "45023282591",
+  "utc": "2026-11-22T12:44:32Z"
  },
- "minutes": 21.057902467250823,
+ "minutes": 6.093178776899974,
  "panel_sha256": "97f73ed9e88126a4ddaa549f83dc615b521512739d3ff0c6850bb858e65ac1a2",
  "placebo_draws": 1000,
  "shock_events": {
