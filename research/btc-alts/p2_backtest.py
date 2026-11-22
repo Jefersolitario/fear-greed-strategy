@@ -377,6 +377,20 @@ def ffill_window(Ct, Ot, last_close):
     return Cc, Oc, dead
 
 
+def greedy_disjoint(order, A, B, n_pairs):
+    """The best-ranked pairs such that no coin appears twice."""
+    used, out = set(), []
+    for p in order:
+        a, b = int(A[p]), int(B[p])
+        if a in used or b in used:
+            continue
+        out.append(int(p))
+        used.update((a, b))
+        if len(out) == n_pairs:
+            break
+    return np.array(out, np.int64)
+
+
 def run_walkforward(tag, panel, rank_panel, F, perp, Ts, top_n, n_pairs, cfg, entries, results,
                     FORM_BARS=FORM_BARS, TRADE_BARS=TRADE_BARS):
     """One test (bar size and window lengths). Appends to `results` (daily components, windows, selected pairs,
@@ -389,10 +403,13 @@ def run_walkforward(tag, panel, rank_panel, F, perp, Ts, top_n, n_pairs, cfg, en
     cfgs = []
     for m in methods:
         for e in entries:
-            cfgs.append((m, f"e{e}", e, False))
+            cfgs.append((m, f"e{e}", e, False, False))
         if 2.0 in entries and tag == "1h":
-            cfgs.append((m, "vol", 2.0, True))
-    names = [f"{tag}_{m}_{v}_{tm}" for (m, v, _, _) in cfgs for tm in ("ontime", "late")]
+            cfgs.append((m, "vol", 2.0, True, False))
+            # POST HOC diagnostic, added after the first results showed that one coin can be in all 20 selected pairs:
+            # the same rule with each coin in at most one pair. Not part of the pre-specified family.
+            cfgs.append((m, "e2.0div", 2.0, False, True))
+    names = [f"{tag}_{m}_{v}_{tm}" for (m, v, _, _, _) in cfgs for tm in ("ontime", "late")]
     daily = {nm: {k: np.zeros(n_days_total) for k in ("gross", "n1", "n2", "n3", "fund")} for nm in names}
     plac = {nm: np.zeros((R_PLACEBO, n_days_total), np.float32) for nm in names}
     plac_g = {nm: np.zeros((R_PLACEBO, n_days_total), np.float32) for nm in names}
@@ -451,31 +468,51 @@ def run_walkforward(tag, panel, rank_panel, F, perp, Ts, top_n, n_pairs, cfg, en
             kk = min(n_pairs, len(pool))
             pick = rng[m].random((R_PLACEBO, len(pool))).argpartition(kk - 1, axis=1)[:, :kk]
             draw[m] = pool[pick]
+        sel_div, draw_div = {}, {}
+        if tag == "1h":
+            pidx = np.full((n, n), -1, np.int64)
+            pidx[fs["I"], fs["J"]] = np.arange(P)
+            pidx[fs["J"], fs["I"]] = np.arange(P)
+            for m in methods:
+                order = np.argsort(fs["ssd"], kind="stable") if m == "dist" else np.argsort(tv, kind="stable")
+                if m == "coint":
+                    order = order[np.isfinite(tv[order])]
+                sel_div[m] = greedy_disjoint(order, fs["I"], fs["J"], n_pairs)
+                rr = np.random.default_rng(C.SEED + 60000 + (0 if m == "dist" else 5000) + k)
+                dd = np.zeros((R_PLACEBO, n_pairs), np.int64)
+                for r_ in range(R_PLACEBO):
+                    perm = rr.permutation(n)
+                    cand = pidx[perm[0:2 * (n // 2):2], perm[1:2 * (n // 2):2]]
+                    if m == "coint":
+                        cand = cand[fs["valid"][cand]]
+                    dd[r_] = np.resize(cand[:n_pairs], n_pairs)
+                draw_div[m] = dd
         wrow = {"bar": tag, "window": k, "T": C.iso(T), "n_universe": n, "pairs": P, "coint_valid": int(fs["valid"].sum()),
                 "bh_fixed_order": bh_all, "bh_selected": bh_sel, "min_eg_p_selected": float(np.nanmin(p_sel)) if len(p_sel) else float("nan")}
-        base_net = {}
-        for (m, v, e, vol) in cfgs:
+        base_net, div_net = {}, {}
+        for (m, v, e, vol, div) in cfgs:
             A_, B_, z_, valid_ = legs[m]
+            pick = sel_div[m] if div else sel[m]
             logm = np.zeros(P, bool)
-            logm[sel[m]] = True
+            logm[pick] = True
             for tm in ("ontime", "late"):
                 nm = f"{tag}_{m}_{v}_{tm}"
-                want_log = (v == "e2.0")
+                want_log = v in ("e2.0", "e2.0div")
                 sim = simulate(z_, Oc, Cc, dead, A_, B_, e, Fw, day, n_days, valid=valid_,
                                late=(tm == "late"), logm=logm if want_log else None, qv=qv, perp=pw)
                 net = net_of(sim, hs[A_], hs[B_])
-                w = np.ones(len(sel[m]))
+                w = np.ones(len(pick))
                 if vol:
-                    inv = 1.0 / fs["sd_ret"][sel[m]]
+                    inv = 1.0 / fs["sd_ret"][pick]
                     w = inv / inv.mean()
                 for key in ("gross", "fund"):
-                    daily[nm][key][off:off + n_days] += (sim[key][sel[m]] * w[:, None]).sum(0) / (2 * n_pairs)
-                tA, tB = tier[A_[sel[m]]], tier[B_[sel[m]]]
+                    daily[nm][key][off:off + n_days] += (sim[key][pick] * w[:, None]).sum(0) / (2 * n_pairs)
+                tA, tB = tier[A_[pick]], tier[B_[pick]]
                 for t_ in (1, 2, 3):      # traded notional by liquidity tier of the leg, so any cost can be applied later
-                    nt = (sim["na"][sel[m]] * (w * (tA == t_))[:, None]).sum(0) + (sim["nb"][sel[m]] * (w * (tB == t_))[:, None]).sum(0)
+                    nt = (sim["na"][pick] * (w * (tA == t_))[:, None]).sum(0) + (sim["nb"][pick] * (w * (tB == t_))[:, None]).sum(0)
                     daily[nm][f"n{t_}"][off:off + n_days] += nt / (2 * n_pairs)
-                # placebo: 20 random pairs of the same universe, same rule, same costs
-                di = draw[m]
+                # placebo: 20 random pairs of the same universe (disjoint ones for the diversified variant), same rule, same costs
+                di = draw_div[m] if div else draw[m]
                 if vol:
                     inv = 1.0 / fs["sd_ret"][di]
                     wd = inv / inv.mean(axis=1, keepdims=True)
@@ -484,10 +521,12 @@ def run_walkforward(tag, panel, rank_panel, F, perp, Ts, top_n, n_pairs, cfg, en
                 else:
                     plac[nm][:, off:off + n_days] += net[di].sum(1) / (2 * n_pairs)
                     plac_g[nm][:, off:off + n_days] += sim["gross"][di].sum(1) / (2 * n_pairs)
-                wrow[f"{nm}|gross"] = float((sim["gross"][sel[m]] * w[:, None]).sum() / (2 * n_pairs))
-                wrow[f"{nm}|net"] = float((net[sel[m]] * w[:, None]).sum() / (2 * n_pairs))
-                wrow[f"{nm}|entries"] = int(sim["n_entry"][sel[m]].sum())
-                wrow[f"{nm}|stops"] = int(sim["n_stop"][sel[m]].sum())
+                wrow[f"{nm}|gross"] = float((sim["gross"][pick] * w[:, None]).sum() / (2 * n_pairs))
+                wrow[f"{nm}|net"] = float((net[pick] * w[:, None]).sum() / (2 * n_pairs))
+                wrow[f"{nm}|entries"] = int(sim["n_entry"][pick].sum())
+                wrow[f"{nm}|stops"] = int(sim["n_stop"][pick].sum())
+                if v == "e2.0div":
+                    div_net[(m, tm)] = (net.sum(1), sim["gross"].sum(1), sim["n_entry"])
                 if v == "e2.0":
                     base_net[(m, tm)] = (net.sum(1), sim["gross"].sum(1), sim["n_entry"])
                     if tm == "ontime":
@@ -495,13 +534,14 @@ def run_walkforward(tag, panel, rank_panel, F, perp, Ts, top_n, n_pairs, cfg, en
                         pool = np.arange(P) if valid_ is None else np.flatnonzero(valid_)
                         best = pool[np.argsort(-net.sum(1)[pool], kind="stable")[:n_pairs]]
                         hind[f"{tag}_{m}"][off:off + n_days] += net[best].sum(0) / (2 * n_pairs)
+                if want_log:
                     for tr in sim["trades"]:
                         p = tr["pair"]
                         cost = ((C.TAKER_FEE * 1e-4 + hs[A_[p]]) * (1.0 + tr["exit_a"])
                                 + (C.TAKER_FEE * 1e-4 + hs[B_[p]]) * (1.0 + tr["exit_b"]))
                         results["trades"].append([
-                            tag, k, m, tm, syms[A_[p]], syms[B_[p]], C.iso(bar_t[tr["t_entry"]]), C.iso(bar_t[tr["t_exit"]]),
-                            tr["dir"], f"{tr['z_signal']:.3f}", tr["reason"], f"{tr['gross'] * 1e4:.2f}",
+                            tag, k, m + ("_div" if div else ""), tm, syms[A_[p]], syms[B_[p]], C.iso(bar_t[tr["t_entry"]]),
+                            C.iso(bar_t[tr["t_exit"]]), tr["dir"], f"{tr['z_signal']:.3f}", tr["reason"], f"{tr['gross'] * 1e4:.2f}",
                             f"{cost * 1e4:.2f}",
                             f"{tr['funding'] * 1e4:.3f}", f"{tr['qv_min']:.0f}", int(tr["perp_a"]), int(tr["perp_b"]),
                             rk[syms[A_[p]]], rk[syms[B_[p]]]])
@@ -509,12 +549,13 @@ def run_walkforward(tag, panel, rank_panel, F, perp, Ts, top_n, n_pairs, cfg, en
         for m in methods:
             A_, B_, _, _ = legs[m]
             stat = fs["ssd"] if m == "dist" else fs["tstat"]
-            for r_, p in enumerate(sel[m]):
-                results["selected"].append([
-                    tag, k, C.iso(T)[:10], m, r_ + 1, syms[A_[p]], syms[B_[p]], rk[syms[A_[p]]], rk[syms[B_[p]]],
-                    f"{stat[p]:.6g}", f"{fs['beta'][p]:.4f}" if m == "coint" else "", f"{fs['sd_ret'][p]:.6f}",
-                    f"{base_net[(m, 'ontime')][1][p] * 1e4:.2f}", f"{base_net[(m, 'ontime')][0][p] * 1e4:.2f}",
-                    f"{base_net[(m, 'late')][0][p] * 1e4:.2f}", int(base_net[(m, 'ontime')][2][p])])
+            for label, picks, nets in ((m, sel[m], base_net), (m + "_div", sel_div.get(m, []), div_net)):
+                for r_, p in enumerate(picks):
+                    results["selected"].append([
+                        tag, k, C.iso(T)[:10], label, r_ + 1, syms[A_[p]], syms[B_[p]], rk[syms[A_[p]]], rk[syms[B_[p]]],
+                        f"{stat[p]:.6g}", f"{fs['beta'][p]:.4f}" if m == "coint" else "", f"{fs['sd_ret'][p]:.6f}",
+                        f"{nets[(m, 'ontime')][1][p] * 1e4:.2f}", f"{nets[(m, 'ontime')][0][p] * 1e4:.2f}",
+                        f"{nets[(m, 'late')][0][p] * 1e4:.2f}", int(nets[(m, 'ontime')][2][p])])
         if tag == "1h":
             order_d = np.empty(P, np.int32)
             order_d[np.argsort(fs["ssd"], kind="stable")] = np.arange(P)
@@ -579,10 +620,14 @@ def shock_test(panel, F, events, label, mirror, rows):
             cost_maker = 2 * C.MAKER_FEE * (1 + beta)
             xs, ys = ar[idx], pr[idx]
             slope = float(((xs - xs.mean()) * (ys - ys.mean())).sum() / ((xs - xs.mean()) ** 2).sum())
+            qv_dec = np.nan_to_num(panel["qv"][h + 1, cols].astype(np.float64))      # volume of the bar that ends at the decision
             rows.append([label, eid, C.iso(t_bar), H, int(ok.sum()), f"{np.mean(ar[idx]) * 1e4:.2f}", f"{np.mean(ar[pick]) * 1e4:.2f}",
                          f"{sgn * np.mean(pr[pick]) * 1e4:.2f}", f"{np.mean(cost[pick]):.2f}", f"{np.mean(cost_maker[pick]):.2f}",
                          f"{np.mean(fund[pick]) * 1e4:.3f}", f"{slope:.4f}", f"{np.mean(pr[idx]) * 1e4:.2f}",
-                         f"{(float(cl[h + 1, jb]) / float(cl[h - 1, jb]) - 1) * 1e4:.1f}", f"{np.mean(beta[pick]):.3f}"])
+                         f"{(float(cl[h + 1, jb]) / float(cl[h - 1, jb]) - 1) * 1e4:.1f}", f"{np.mean(beta[pick]):.3f}",
+                         f"{(btc_x / btc_e - 1.0) * 1e4:.1f}", f"{np.mean(last[pick] / e_px[pick] - 1.0) * 1e4:.1f}",
+                         f"{np.mean([rk[syms[i]] for i in pick]):.1f}", f"{np.median(qv_dec[pick]):.0f}", f"{np.min(qv_dec[pick]):.0f}",
+                         f"{np.mean(last[idx] / e_px[idx] - 1.0) * 1e4:.1f}", f"{np.mean(beta[idx]):.3f}"])
 
 
 # ---- main ---------------------------------------------------------------------------------------------------
@@ -736,7 +781,9 @@ def main():
     shock_test(panel, F, ev_b_up, "B_hourly_up_mirror", True, srows)
     write_gz(os.path.join(OUT, "shock_events.csv.gz"),
              ["set", "event_id", "utc", "H", "n_coins", "mean_ar_all_bps", "mean_ar_picked_bps", "gross_bps", "cost_taker_bps",
-              "cost_maker_bps", "funding_bps", "xs_slope", "all_coins_hedged_bps", "btc_shock_bps", "mean_beta_picked"], srows)
+              "cost_maker_bps", "funding_bps", "xs_slope", "all_coins_hedged_bps", "btc_shock_bps", "mean_beta_picked",
+              "btc_hold_return_bps", "picked_unhedged_bps", "mean_liq_rank_picked", "median_hourly_volume_picked_usd",
+              "min_hourly_volume_picked_usd", "all_coins_unhedged_bps", "mean_beta_all"], srows)
 
     # ---- outputs ----
     import datetime as dt

@@ -206,3 +206,15 @@ exchange's own metadata, not from their names: every such pair carries the permi
 and no other pair does (census in `out/s0`, 113 of 113 against 0 of 396). They are removed at ranking, so
 the next coins move up; the Bitcoin events are unchanged (they use Bitcoin data only). This was decided on
 the composition of the universe alone, before any return of any other coin had been looked at.
+
+## Addendum 5, 22 Nov 2026, AFTER the first Part 2 results: post hoc diagnostics (not pre-specified)
+
+The first Part 2 run showed that the cointegration selection can put one coin into all 20 pairs of a window
+(NFP in July 2026), so that the "portfolio of 20 pairs" is one position. Two diagnostics were added after
+seeing this. They are outside the pre-specified family, they are not in the deflated Sharpe or best-of
+comparisons, and they cannot support a positive verdict on their own:
+
+- the base rule with each coin in at most one pair (best-ranked disjoint pairs), with a placebo of 20
+  disjoint random pairs, hourly bars, on time and one bar late;
+- for the shock-reversion test, extra columns only (Bitcoin's return over the hold, the unhedged return of
+  the coins bought, their liquidity rank and hourly volume). The rule and its primary horizon are unchanged.

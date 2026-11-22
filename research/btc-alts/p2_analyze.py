@@ -1,8 +1,8 @@
 """Part 2 inference from the committed compact tables (no network).
 
 Run:  python p2_analyze.py                 all tables, writes out/p2/summary.json
-      python p2_analyze.py --table configs one table (configs, years, split, maxstat, pairs, hindsight, trades, bh,
-                                           shock, speed, size)
+      python p2_analyze.py --table configs one table (configs, years, split, maxstat, pairs, hindsight, concentration,
+                                           trades, bh, shock, speed, size)
       BTCALTS_TEST=1 python p2_analyze.py  the same on the synthetic market
 Returns are daily PnL on committed gross notional (20 pairs x 2 legs). Net = gross - fee x traded notional
 - half-spreads + funding. Annualised with 365 days.
@@ -111,6 +111,11 @@ class Data:
         return idx
 
 
+def posthoc(nm):
+    """Configurations added after the first results (diagnostics, outside the pre-specified family)."""
+    return "div" in nm
+
+
 def sharpe(x):
     sd = x.std(ddof=1)
     return float(x.mean() / sd * math.sqrt(365)) if sd > 0 else 0.0
@@ -141,7 +146,7 @@ def deflated_sharpe(x, sr_trials, n_trials=N_TRIALS):
 
 def table_configs(D):
     out = {}
-    sr_day = {nm: (lambda x: x.mean() / x.std(ddof=1) if x.std(ddof=1) > 0 else 0.0)(D.net(nm)) for nm in D.series}
+    sr_day = {nm: (lambda x: x.mean() / x.std(ddof=1) if x.std(ddof=1) > 0 else 0.0)(D.net(nm)) for nm in D.series if not posthoc(nm)}
     trials = np.array(list(sr_day.values()))
     idx_cache = {}
     print("\n## All configurations: annualised return on committed gross notional, % per year. Net = taker 5 bps + half-spread "
@@ -149,7 +154,7 @@ def table_configs(D):
     print("| configuration | timing | gross | net | net 95% (block bootstrap) | Sharpe net | maker-fee case | spot-fee case | "
           "funding | placebo mean net | p placebo | PSR(0) | deflated Sharpe (N=24) | ES 5% day, bps | worst day | worst 5 days | max drawdown |")
     print("|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|")
-    for nm in sorted(D.series):
+    for nm in sorted(D.series, key=lambda z: (posthoc(z), z)):
         tag = D.tag(nm)
         n = len(D.dates[tag])
         yrs = n / 365.0
@@ -180,7 +185,8 @@ def table_configs(D):
                "psr0": psr, "dsr": dsr, "sr0_annualised": sr0, **rk}
         out[nm] = row
         parts = nm.split("_")
-        print(f"| {' '.join(parts[:-1])} | {parts[-1]} | {fmt(row['gross_ann_pct'])} | {fmt(row['net_ann_pct'])} | "
+        row["post_hoc"] = posthoc(nm)
+        print(f"| {' '.join(parts[:-1])}{' (POST HOC)' if posthoc(nm) else ''} | {parts[-1]} | {fmt(row['gross_ann_pct'])} | {fmt(row['net_ann_pct'])} | "
               f"[{fmt(lo)}, {fmt(hi)}] | {fmt(row['sharpe_net'], 2)} | {fmt(row['net_maker_ann_pct'])} | {fmt(row['net_spot_fee_ann_pct'])} | "
               f"{fmt(row['funding_ann_pct'], 2)} | {fmt(row['placebo_mean_net_ann_pct'])} | {fmt(p_plac, 3)} | {fmt(psr, 3)} | {fmt(dsr, 3)} | "
               f"{fmt(rk['es5_bps'])} | {fmt(rk['worst_day_bps'])} | {fmt(rk['worst_5d_bps'])} | {fmt(rk['max_drawdown_bps'], 0)} |")
@@ -213,7 +219,7 @@ def table_split(D):
     """Best hourly configuration on the windows before the split date, evaluated once after it."""
     dates = D.dates["1h"]
     early = np.array([d < D.split_date for d in dates])
-    hourly = sorted(n_ for n_ in D.series if D.tag(n_) == "1h")
+    hourly = sorted(n_ for n_ in D.series if D.tag(n_) == "1h" and not posthoc(n_))
     sel = {nm: sharpe(D.net(nm)[early]) for nm in hourly}
     best = max(sel, key=sel.get)
     x = D.net(best)
@@ -245,7 +251,7 @@ def table_maxstat(D):
     """The best configuration against the best-of-all-configurations placebo (same draw index across configurations)."""
     out = {}
     for tag in D.tags:
-        names = sorted(n_ for n_ in D.series if D.tag(n_) == tag)
+        names = sorted(n_ for n_ in D.series if D.tag(n_) == tag and not posthoc(n_))
         real = {nm: sharpe(D.net(nm)) for nm in names}
         real_net = {nm: float(D.net(nm).sum() * 1e4) for nm in names}
         ps = np.array([[float(r["sharpe"]) for r in D.placebo[nm]] for nm in names])
@@ -288,6 +294,35 @@ def table_pairs(D):
             print("|---|---|---|---|---|")
             for k, v in top:
                 print(f"| {k} | {v[0]} | {fmt(v[2], 0)} | {fmt(v[1], 0)} | {fmt(v[3], 0)} |")
+    return out
+
+
+def table_concentration(D):
+    """How many of the 20 selected pairs share one coin."""
+    import collections
+    rows = read_gz("selected_pairs.csv.gz")
+    out = {}
+    print("\n## Concentration: the largest number of the selected pairs of a window that share one coin")
+    print("| bar | selection | windows | median | mean | max | windows where one coin is in 10 or more pairs | distinct coins per window (median) |")
+    print("|---|---|---|---|---|---|---|---|")
+    for tag in D.tags:
+        for m in ("dist", "coint", "dist_div", "coint_div"):
+            by = collections.defaultdict(list)
+            for r in rows:
+                if r["bar"] == tag and r["method"] == m:
+                    by[r["window"]].append((r["a"], r["b"]))
+            if not by:
+                continue
+            mx, nd = [], []
+            for w, pairs in by.items():
+                c = collections.Counter(x for p in pairs for x in p)
+                mx.append(max(c.values()))
+                nd.append(len(c))
+            mx = np.array(mx)
+            out[f"{tag}_{m}"] = {"windows": len(mx), "median": float(np.median(mx)), "mean": float(mx.mean()), "max": int(mx.max()),
+                                 "windows_ge_10": int((mx >= 10).sum()), "median_distinct_coins": float(np.median(nd))}
+            o = out[f"{tag}_{m}"]
+            print(f"| {tag} | {m} | {o['windows']} | {fmt(o['median'], 0)} | {fmt(o['mean'], 1)} | {o['max']} | {o['windows_ge_10']} | {fmt(o['median_distinct_coins'], 0)} |")
     return out
 
 
@@ -353,7 +388,7 @@ def table_trades(D):
           "median hold, hours | median volume of the thinner leg in the signal bar, USD | 10th percentile | both legs had a perpetual |")
     print("|---|---|---|---|---|---|---|---|---|---|---|---|---|---|")
     for tag in D.tags:
-        for m in ("dist", "coint"):
+        for m in ("dist", "coint", "dist_div", "coint_div"):
             for tm in ("ontime", "late"):
                 tr = [r for r in rows if r["bar"] == tag and r["method"] == m and r["timing"] == tm]
                 if not tr:
@@ -452,9 +487,29 @@ def table_shock(D):
                   f"{fmt(o['net'])} [{fmt(o['net_ci'][0])}, {fmt(o['net_ci'][1])}] | {fmt(o['net_maker'])} [{fmt(o['net_maker_ci'][0])}, {fmt(o['net_maker_ci'][1])}] | "
                   f"{fmt(100 * o['hit_net'], 0)}% | {fmt(o['placebo_gross_mean'])} | {fmt(p_pl, 3)} | {fmt(o['slope'], 3)} [{fmt(o['slope_ci'][0], 3)}, {fmt(o['slope_ci'][1], 3)}] | "
                   f"{fmt(o['all_coins'])} [{fmt(o['all_coins_ci'][0])}, {fmt(o['all_coins_ci'][1])}] |")
+    print("\n## The same events: what the hedge did, and size. Means per event, bps")
+    print("| events | hold | Bitcoin over the hold | the 10 coins unhedged | hedged gross | all coins unhedged | mean beta of the 10 | mean liquidity rank of the 10 | "
+          "median hourly volume of the 10 at the decision, USD | events where the thinnest of the 10 traded under 100,000 USD in that hour |")
+    print("|---|---|---|---|---|---|---|---|---|---|")
+    for st in ("A_1min_down", "B_hourly_down", "placebo"):
+        for H in (4, 24, 72):
+            ev = [r for r in rows if r["set"] == st and int(r["H"]) == H]
+            if len(ev) < 5 or "btc_hold_return_bps" not in ev[0]:
+                continue
+            f = lambda k: float(np.mean([float(r[k]) for r in ev]))
+            thin = float(np.mean([float(r["min_hourly_volume_picked_usd"]) < 100_000 for r in ev]))
+            out[f"diag|{st}|H{H}"] = {"btc_hold": f("btc_hold_return_bps"), "picked_unhedged": f("picked_unhedged_bps"), "gross": f("gross_bps"),
+                                      "all_unhedged": f("all_coins_unhedged_bps"), "beta_picked": f("mean_beta_picked"), "rank_picked": f("mean_liq_rank_picked"),
+                                      "median_volume_picked": float(np.median([float(r["median_hourly_volume_picked_usd"]) for r in ev])), "share_thin": thin,
+                                      "corr_gross_btc_hold": float(np.corrcoef([float(r["gross_bps"]) for r in ev], [float(r["btc_hold_return_bps"]) for r in ev])[0, 1])}
+            o = out[f"diag|{st}|H{H}"]
+            print(f"| {st} | {H} h | {fmt(o['btc_hold'])} | {fmt(o['picked_unhedged'])} | {fmt(o['gross'])} | {fmt(o['all_unhedged'])} | {fmt(o['beta_picked'], 2)} | "
+                  f"{fmt(o['rank_picked'], 0)} | {fmt(o['median_volume_picked'], 0)} | {fmt(100 * thin, 0)}% |")
     print("\n| events | hold | net, early part (n) | net, late part (n) | median net | worst event |")
     print("|---|---|---|---|---|---|")
     for k, o in out.items():
+        if k.startswith("diag|"):
+            continue
         st, H = k.split("|")
         print(f"| {st} | {H[1:]} h | {fmt(o['net_early'])} ({o['n_early']}) | {fmt(o['net_late'])} ({o['n_late']}) | {fmt(o['median_net'])} | {fmt(o['worst_event_net'])} |")
     return out
@@ -528,7 +583,7 @@ def table_speed(D):
 
 
 TABLES = {"configs": table_configs, "years": table_years, "split": table_split, "maxstat": table_maxstat, "pairs": table_pairs,
-          "hindsight": table_hindsight, "trades": table_trades, "bh": table_bh, "shock": table_shock, "speed": table_speed,
+          "hindsight": table_hindsight, "concentration": table_concentration, "trades": table_trades, "bh": table_bh, "shock": table_shock, "speed": table_speed,
           "size": table_size}
 
 

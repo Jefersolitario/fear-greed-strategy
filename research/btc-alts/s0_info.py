@@ -1,11 +1,12 @@
 """Census of the exchangeInfo attributes of every USDT pair (one request). Used to decide, from the exchange's own
 metadata, which pairs are tokenized equities or other pegged products that must stay out of the coin universe.
 
-Output: out/s0/usdt_symbols_info.csv, out/s0/samples.json
+Output: out/s0/usdt_symbols_info.csv.gz, out/s0/samples.json
 """
 from __future__ import annotations
 
 import csv
+import gzip
 import json
 import os
 import sys
@@ -29,7 +30,7 @@ def main():
            "quoteOrderQtyMarketAllowed", "allowTrailingStop", "cancelReplaceAllowed", "amendAllowed", "isSpotTradingAllowed",
            "isMarginTradingAllowed", "filters", "permissions", "permissionSets", "defaultSelfTradePreventionMode",
            "allowedSelfTradePreventionModes", "pegInstructionsAllowed", "opoAllowed"}
-    with open(os.path.join(OUT, "usdt_symbols_info.csv"), "w", newline="") as f:
+    with gzip.open(os.path.join(OUT, "usdt_symbols_info.csv.gz"), "wt", newline="") as f:
         w = csv.writer(f)
         w.writerow(["symbol", "base", "status", "isSpotTradingAllowed", "isMarginTradingAllowed", "permissions", "permissionSets",
                     "filter_types", "other_keys"])

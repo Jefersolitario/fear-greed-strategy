@@ -50,11 +50,12 @@ def load_pegged_products() -> set[str]:
 
     They are pegged products, listed from June 2026, and stay out of the coin universe. Empty if no census.
     """
-    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "out", "s0", "usdt_symbols_info.csv")
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "out", "s0", "usdt_symbols_info.csv.gz")
     out: set[str] = set()
     if os.path.exists(path):
         import csv
-        with open(path, newline="") as f:
+        import gzip
+        with gzip.open(path, "rt", newline="") as f:
             for r in csv.DictReader(f):
                 if PEGGED_GROUP in r.get("permissionSets", ""):
                     out.add(r["symbol"])
