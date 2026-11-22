@@ -1,0 +1,59 @@
+name: research-btc-alts-s1
+
+# Research only: public market data, no API key, no orders. Stage 1: endpoint probe, Bitcoin shock
+# events, hourly panel, point-in-time universes. Runs only on the research branch.
+on:
+  push:
+    branches: ["claude/research-btc-alts"]
+    paths:
+      - "research/btc-alts/s1_data.py"
+      - ".github/workflows/research-btc-alts-s1.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: research-btc-alts-s1
+  cancel-in-progress: true
+
+jobs:
+  run:
+    if: github.ref == 'refs/heads/claude/research-btc-alts'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install
+        run: pip install -r research/btc-alts/requirements.txt
+      - name: Restore the hourly panel (not committed)
+        uses: actions/cache/restore@v4
+        with:
+          path: research/btc-alts/cache/hourly_panel.npz
+          key: btc-alts-hourly-v1-${{ github.run_id }}
+          restore-keys: btc-alts-hourly-v1-
+      - name: Stage 1
+        working-directory: research/btc-alts
+        run: python s1_data.py
+      - name: Save the hourly panel
+        if: always() && hashFiles('research/btc-alts/cache/hourly_panel.npz') != ''
+        uses: actions/cache/save@v4
+        with:
+          path: research/btc-alts/cache/hourly_panel.npz
+          key: btc-alts-hourly-v1-${{ github.run_id }}
+      - name: Commit compact outputs
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add research/btc-alts/out/s1 || true
+          if git diff --cached --quiet; then echo "nothing to commit"; exit 0; fi
+          git commit -m "research(btc-alts): stage 1 outputs (events, universes, probe)" \
+                     -m "Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>
+          Claude-Session: https://claude.ai/code/session_01P1dahfAEk7SjXso6WjuRK2"
+          for i in 1 2 3 4 5; do
+            git pull --rebase origin claude/research-btc-alts && git push origin HEAD:claude/research-btc-alts && break
+            sleep $((i * 5))
+          done
