@@ -276,6 +276,12 @@
 | placebo | 24 h | 18.8 | 9.9 | -11.0 | 20.1 | 1.31 | 52 | 641094 | 44% |
 | placebo | 72 h | 38.4 | -9.1 | -49.6 | 18.2 | 1.31 | 52 | 641094 | 44% |
 
+## The 24-hour result under pressure (primary event set and the hourly-event set). bps per event
+| events | n | mean net | median net | mean net without the 5 best events | without the 5 best and 5 worst | share of total net PnL from the 5 best | funding: Bitcoin short | funding: coin longs | coins bought that had a perpetual | net if the coins are bought on spot (10 bps fee, no coin funding) | net if the coins' half-spread is twice the assumption [95%] | thinnest of the 10 coins, hourly volume at the decision: median USD | events where it is under 100,000 / 50,000 / 20,000 USD |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| A_1min_down | 104 | 73.3 | 21.8 | 20.6 | 56.0 | 73% | 3.88 | 1.09 | 86% | 62.2 | 56.8 [-15.6, 129.5] | 237401 | 24% / 11% / 4% |
+| B_hourly_down | 118 | 82.3 | 37.1 | 26.3 | 93.6 | 69% | 2.43 | 1.62 | 73% | 70.7 | 65.2 [-44.1, 169.9] | 348236 | 14% / 3% / 0% |
+
 | events | hold | net, early part (n) | net, late part (n) | median net | worst event |
 |---|---|---|---|---|---|
 | A_1min_down | 4 h | -12.7 (75) | 4.3 (29) | -5.7 | -777.7 |
@@ -351,4 +357,4 @@
 | 5mB dist e2.0 | late | -7.2 | -6.7 | -6.9 | -7.1 | -7.7 |
 | 5mB dist e2.0 | ontime | -7.2 | -6.7 | -6.9 | -7.1 | -7.7 |
 
-wrote /home/claude/research/btc-alts/repo/research/btc-alts/out/p2/summary.json
+wrote /home/runner/work/fear-greed-strategy/fear-greed-strategy/research/btc-alts/out/p2/summary.json
