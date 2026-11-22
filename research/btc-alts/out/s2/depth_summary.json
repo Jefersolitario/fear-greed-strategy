@@ -1,0 +1,65 @@
+{
+ "by_tier": {
+  "tier1": {
+   "assumed_half_spread_bps": 2.0,
+   "books_too_thin_for_10k": 0,
+   "coins": 10,
+   "cost_10k_max_bps": 14.599,
+   "cost_10k_median_bps": 1.2839999999999998,
+   "cost_10k_p75_bps": 2.62225,
+   "cost_1k_max_bps": 14.599,
+   "cost_1k_median_bps": 0.7567499999999999,
+   "cost_1k_p75_bps": 1.24125,
+   "depth_100_levels_median_usd": 1123366.75,
+   "half_spread_median_bps": 0.62125
+  },
+  "tier2": {
+   "assumed_half_spread_bps": 5.0,
+   "books_too_thin_for_10k": 0,
+   "coins": 20,
+   "cost_10k_max_bps": 33.062,
+   "cost_10k_median_bps": 5.343249999999999,
+   "cost_10k_p75_bps": 8.698875000000001,
+   "cost_1k_max_bps": 11.7385,
+   "cost_1k_median_bps": 2.92775,
+   "cost_1k_p75_bps": 4.07,
+   "depth_100_levels_median_usd": 289252.0,
+   "half_spread_median_bps": 1.6909999999999998
+  },
+  "tier3": {
+   "assumed_half_spread_bps": 10.0,
+   "books_too_thin_for_10k": 0,
+   "coins": 70,
+   "cost_10k_max_bps": 86.4825,
+   "cost_10k_median_bps": 17.7105,
+   "cost_10k_p75_bps": 34.256,
+   "cost_1k_max_bps": 54.054,
+   "cost_1k_median_bps": 7.915749999999999,
+   "cost_1k_p75_bps": 12.9535,
+   "depth_100_levels_median_usd": 123658.5,
+   "half_spread_median_bps": 4.584
+  }
+ },
+ "meta": {
+  "api_stats": {
+   "bulk_calls": 0,
+   "bulk_status": {},
+   "calls": 400,
+   "max_used_weight_1m": 500,
+   "retries": 0,
+   "status": {
+    "200": 400
+   },
+   "weight": 2000
+  },
+  "git_sha": "7ce119c5dbdc9358a698a0e10bf3d3570a5dee02",
+  "numpy": "2.5.5",
+  "python": "3.13.18",
+  "refused": {},
+  "run_id": "45020976631",
+  "utc": "2026-11-22T12:23:43Z"
+ },
+ "note": "spot books, calm conditions, today; not history",
+ "refused": null,
+ "snapshots": 4
+}
