@@ -162,6 +162,45 @@ def check_hand_trade():
     print("hand-computed trade: gross, traded notional, costs and funding as expected (on time and one bar late)")
 
 
+def check_no_lookahead():
+    """Scramble every bar after the decision: the universe, betas, abnormal returns, picks and costs must not move."""
+    import common as C
+    import fake_binance
+    cfg = fake_binance.test_config()
+    cl = fake_binance.FakeClient()
+    syms = ["BTCUSDT"] + [a + "USDT" for a in cl.w.alts]
+    panel = C.build_hourly_panel(cl, syms, cfg.hourly_start, cfg.end, 2, log=lambda *a: None)
+    panel["step_ms"] = C.HOUR
+    n = panel["close"].shape[0]
+    F = np.zeros(panel["close"].shape, np.float32)
+    perp = np.zeros(panel["close"].shape, bool)
+    rng = np.random.default_rng(3)
+    fixed = (4, 5, 6, 8, 9, 13, 14, 17, 18, 19)      # coins, abnormal returns, costs, shock size, beta, rank, volumes
+    same = moved = total = 0
+    for h in rng.integers(800, n - 100, size=25):
+        h = int(h)
+        r0, r1 = [], []
+        P2.shock_test(panel, F, perp, [("E", h)], "x", False, r0)
+        p2 = dict(panel)
+        for k in ("open", "close", "qv"):
+            a = panel[k].copy()
+            a[h + 2:] = a[h + 2:] * rng.uniform(0.5, 2.0, size=a[h + 2:].shape).astype(a.dtype)
+            p2[k] = a
+        P2.shock_test(p2, F, perp, [("E", h)], "x", False, r1)
+        t_day = ((panel["start_ms"] + h * C.HOUR) // C.DAY) * C.DAY
+        assert C.rank_at(panel, t_day) == C.rank_at(p2, t_day)
+        if not r0:
+            continue
+        total += 1
+        a, b = r0[1], r1[1]                              # the 24-hour rows
+        same += all(a[i] == b[i] for i in fixed)
+        moved += a[7] != b[7]                            # the outcome does depend on later bars
+    assert total >= 15 and same == total and moved == total, (total, same, moved)
+    print(f"no look-ahead: ranking, betas, abnormal returns, picks and costs unchanged in {same} of {total} synthetic events when "
+          f"every bar after the decision is scrambled (the outcome changed in {moved})")
+
+
+
 def check_synthetic():
     out = os.path.join(HERE, "out_test")
     with open(os.path.join(out, "p1", "summary.json")) as f:
@@ -195,3 +234,4 @@ if __name__ == "__main__":
         check_adf()
         check_engine()
         check_hand_trade()
+        check_no_lookahead()

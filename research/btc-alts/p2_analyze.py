@@ -505,10 +505,46 @@ def table_shock(D):
             o = out[f"diag|{st}|H{H}"]
             print(f"| {st} | {H} h | {fmt(o['btc_hold'])} | {fmt(o['picked_unhedged'])} | {fmt(o['gross'])} | {fmt(o['all_unhedged'])} | {fmt(o['beta_picked'], 2)} | "
                   f"{fmt(o['rank_picked'], 0)} | {fmt(o['median_volume_picked'], 0)} | {fmt(100 * thin, 0)}% |")
+    # ---- the questions a reviewer asks of the 24-hour result: tails, instruments and funding, cost stress, size ----
+    print("\n## The 24-hour result under pressure (primary event set and the hourly-event set). bps per event")
+    print("| events | n | mean net | median net | mean net without the 5 best events | without the 5 best and 5 worst | share of total net PnL from the 5 best | "
+          "funding: Bitcoin short | funding: coin longs | coins bought that had a perpetual | net if the coins are bought on spot (10 bps fee, no coin funding) | "
+          "net if the coins' half-spread is twice the assumption [95%] | thinnest of the 10 coins, hourly volume at the decision: median USD | "
+          "events where it is under 100,000 / 50,000 / 20,000 USD |")
+    print("|---|---|---|---|---|---|---|---|---|---|---|---|---|---|")
+    for st in ("A_1min_down", "B_hourly_down"):
+        ev = [r for r in rows if r["set"] == st and int(r["H"]) == 24]
+        if len(ev) < 12 or "funding_btc_leg_bps" not in ev[0]:
+            continue
+        g = np.array([float(r["gross_bps"]) for r in ev]); c = np.array([float(r["cost_taker_bps"]) for r in ev])
+        f = np.array([float(r["funding_bps"]) for r in ev]); fb = np.array([float(r["funding_btc_leg_bps"]) for r in ev])
+        fc = np.array([float(r["funding_coin_leg_bps"]) for r in ev]); beta = np.array([float(r["mean_beta_picked"]) for r in ev])
+        net = g - c + f
+        srt = np.sort(net)
+        hs = (c - 2 * C.TAKER_FEE - 2 * beta * (C.TAKER_FEE + C.HALF_SPREAD[1])) / 2      # mean assumed half-spread of the coins bought
+        net_spot = g - (c + 2 * (C.SPOT_TAKER_FEE - C.TAKER_FEE)) + fb
+        net_2x = net - 2 * hs
+        wk = np.array([dt.datetime.strptime(r["utc"], "%Y-%m-%dT%H:%M:%SZ").strftime("%G-%V") for r in ev])
+        groups = [np.flatnonzero(wk == u) for u in np.unique(wk)]
+        pick_w = D.rng.integers(0, len(groups), size=(4000, len(groups)))
+        ci2 = [float(x) for x in np.percentile([net_2x[np.concatenate([groups[i] for i in row])].mean() for row in pick_w], [2.5, 97.5])]
+        mv = np.array([float(r["min_hourly_volume_picked_usd"]) for r in ev])
+        o = {"n": len(ev), "mean_net": float(net.mean()), "median_net": float(np.median(net)), "mean_without_best5": float(srt[:-5].mean()),
+             "mean_without_best5_worst5": float(srt[5:-5].mean()), "share_total_from_best5": float(srt[-5:].sum() / net.sum()),
+             "funding_btc_leg": float(fb.mean()), "funding_coin_leg": float(fc.mean()), "share_with_perp": float(np.mean([float(r["share_picked_with_perp"]) for r in ev])),
+             "net_coin_on_spot": float(net_spot.mean()), "net_double_coin_spread": float(net_2x.mean()), "net_double_coin_spread_ci": ci2,
+             "mean_assumed_coin_half_spread": float(hs.mean()), "thinnest_median_usd": float(np.median(mv)),
+             "thinnest_under_100k": float(np.mean(mv < 1e5)), "thinnest_under_50k": float(np.mean(mv < 5e4)), "thinnest_under_20k": float(np.mean(mv < 2e4)),
+             "sd_net": float(net.std(ddof=1)), "t_naive": float(net.mean() / (net.std(ddof=1) / np.sqrt(len(net))))}
+        out[f"pressure|{st}"] = o
+        print(f"| {st} | {o['n']} | {fmt(o['mean_net'])} | {fmt(o['median_net'])} | {fmt(o['mean_without_best5'])} | {fmt(o['mean_without_best5_worst5'])} | "
+              f"{fmt(100 * o['share_total_from_best5'], 0)}% | {fmt(o['funding_btc_leg'], 2)} | {fmt(o['funding_coin_leg'], 2)} | {fmt(100 * o['share_with_perp'], 0)}% | "
+              f"{fmt(o['net_coin_on_spot'])} | {fmt(o['net_double_coin_spread'])} [{fmt(ci2[0])}, {fmt(ci2[1])}] | {fmt(o['thinnest_median_usd'], 0)} | "
+              f"{fmt(100 * o['thinnest_under_100k'], 0)}% / {fmt(100 * o['thinnest_under_50k'], 0)}% / {fmt(100 * o['thinnest_under_20k'], 0)}% |")
     print("\n| events | hold | net, early part (n) | net, late part (n) | median net | worst event |")
     print("|---|---|---|---|---|---|")
     for k, o in out.items():
-        if k.startswith("diag|"):
+        if k.startswith(("diag|", "pressure|")):
             continue
         st, H = k.split("|")
         print(f"| {st} | {H[1:]} h | {fmt(o['net_early'])} ({o['n_early']}) | {fmt(o['net_late'])} ({o['n_late']}) | {fmt(o['median_net'])} | {fmt(o['worst_event_net'])} |")

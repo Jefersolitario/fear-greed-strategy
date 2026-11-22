@@ -575,7 +575,7 @@ def run_walkforward(tag, panel, rank_panel, F, perp, Ts, top_n, n_pairs, cfg, en
 
 
 # ---- shock-reversion test -----------------------------------------------------------------------------------
-def shock_test(panel, F, events, label, mirror, rows):
+def shock_test(panel, F, perp, events, label, mirror, rows):
     """events: list of (id, hour index of the shock bar). Appends one row per event and horizon."""
     start = panel["start_ms"]
     col = {s: j for j, s in enumerate(panel["symbols"])}
@@ -627,7 +627,9 @@ def shock_test(panel, F, events, label, mirror, rows):
                          f"{(float(cl[h + 1, jb]) / float(cl[h - 1, jb]) - 1) * 1e4:.1f}", f"{np.mean(beta[pick]):.3f}",
                          f"{(btc_x / btc_e - 1.0) * 1e4:.1f}", f"{np.mean(last[pick] / e_px[pick] - 1.0) * 1e4:.1f}",
                          f"{np.mean([rk[syms[i]] for i in pick]):.1f}", f"{np.median(qv_dec[pick]):.0f}", f"{np.min(qv_dec[pick]):.0f}",
-                         f"{np.mean(last[idx] / e_px[idx] - 1.0) * 1e4:.1f}", f"{np.mean(beta[idx]):.3f}"])
+                         f"{np.mean(last[idx] / e_px[idx] - 1.0) * 1e4:.1f}", f"{np.mean(beta[idx]):.3f}",
+                         f"{np.mean(sgn * beta[pick] * fb) * 1e4:.3f}", f"{np.mean(-sgn * fa[pick]) * 1e4:.3f}",
+                         f"{np.mean(perp[h + 2, cols[pick]]):.2f}"])
 
 
 # ---- main ---------------------------------------------------------------------------------------------------
@@ -774,16 +776,17 @@ def main():
 
     log("shock-reversion test")
     srows = []
-    shock_test(panel, F, ev_a, "A_1min_down", False, srows)
-    shock_test(panel, F, ev_b, "B_hourly_down", False, srows)
-    shock_test(panel, F, plc, "placebo", False, srows)
-    shock_test(panel, F, ev_up, "A_1min_up_mirror", True, srows)
-    shock_test(panel, F, ev_b_up, "B_hourly_up_mirror", True, srows)
+    shock_test(panel, F, perp, ev_a, "A_1min_down", False, srows)
+    shock_test(panel, F, perp, ev_b, "B_hourly_down", False, srows)
+    shock_test(panel, F, perp, plc, "placebo", False, srows)
+    shock_test(panel, F, perp, ev_up, "A_1min_up_mirror", True, srows)
+    shock_test(panel, F, perp, ev_b_up, "B_hourly_up_mirror", True, srows)
     write_gz(os.path.join(OUT, "shock_events.csv.gz"),
              ["set", "event_id", "utc", "H", "n_coins", "mean_ar_all_bps", "mean_ar_picked_bps", "gross_bps", "cost_taker_bps",
               "cost_maker_bps", "funding_bps", "xs_slope", "all_coins_hedged_bps", "btc_shock_bps", "mean_beta_picked",
               "btc_hold_return_bps", "picked_unhedged_bps", "mean_liq_rank_picked", "median_hourly_volume_picked_usd",
-              "min_hourly_volume_picked_usd", "all_coins_unhedged_bps", "mean_beta_all"], srows)
+              "min_hourly_volume_picked_usd", "all_coins_unhedged_bps", "mean_beta_all", "funding_btc_leg_bps",
+              "funding_coin_leg_bps", "share_picked_with_perp"], srows)
 
     # ---- outputs ----
     import datetime as dt
