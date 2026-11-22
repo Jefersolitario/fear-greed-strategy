@@ -453,4 +453,6 @@
 | up | shock | 0.20 (100% with estimate) | 1.70 (100% with estimate) | 2.80 (100% with estimate) | 4.00 (99% with estimate) |
 | up | post | 0.00 (100% with estimate) | 0.80 (100% with estimate) | 1.10 (100% with estimate) | 1.40 (100% with estimate) |
 
-wrote /home/runner/work/fear-greed-strategy/fear-greed-strategy/research/btc-alts/out/p1/summary.json
+wrote /home/claude/research/btc-alts/repo/research/btc-alts/out/p1/event_summary.csv
+
+wrote /home/claude/research/btc-alts/repo/research/btc-alts/out/p1/summary.json
