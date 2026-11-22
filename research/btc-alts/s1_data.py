@@ -186,6 +186,32 @@ def main():
         by_status[r["status"]] = by_status.get(r["status"], 0) + 1
     log(f"  {n_all} symbols in exchangeInfo, {len(table)} quoted in USDT {by_status}, {len(keep)} kept by name")
 
+    ev_path, man_path = os.path.join(OUT, "events.csv"), os.path.join(OUT, "manifest.json")
+    reuse = (os.path.exists(ev_path) and os.path.exists(man_path) and os.environ.get("BTCALTS_REBUILD_EVENTS") != "1")
+    if reuse:
+        # The events depend on Bitcoin data only and are already committed: a rerun (for the universe rules) keeps them.
+        import json
+        with open(man_path) as f:
+            old = json.load(f)
+        events = []
+        with open(ev_path) as f:
+            for r in csv.DictReader(f):
+                events.append({"event_id": r["event_id"], "kind": r["kind"], "s_star_ms": int(r["s_star_ms"]), "r60": float(r["r60"]),
+                               "btc_ref": float(r["btc_ref"]), "btc_px": float(r["btc_px"])})
+        theta, counts, n_cand = old["theta"], {float(k): v for k, v in old["event_counts"].items()}, old["candidate_minutes"]
+        log(f"3. Bitcoin events: reusing the {len(events)} committed events (theta {theta})")
+    else:
+        events, theta, counts, n_cand = build_events(client, cfg)
+    panel, digest, first_bar, last_bar, n_bars = hourly(client, cfg, keep)
+    write_csv(os.path.join(OUT, "symbols.csv"), ["symbol", "base", "status", "excluded", "hourly_bars", "first_bar", "last_bar", "excluded_at_rank"],
+              [[r["symbol"], r["base"], r["status"], r["excluded"], n_bars.get(r["symbol"], ""),
+                first_bar.get(r["symbol"], ""), last_bar.get(r["symbol"], ""),
+                "tokenized_equity" if r["symbol"] in C.pegged_products() else ""] for r in table])
+    log(f"   tokenized equities excluded at ranking (exchange permission group {C.PEGGED_GROUP}): {len(C.pegged_products())}")
+    universes(client, cfg, panel, digest, events, theta, counts, n_cand, table, limits, n_all, by_status, keep)
+
+
+def build_events(client, cfg):
     log("3. Bitcoin events")
     start, hi, lo, cl = btc_minutes(client, cfg)
     log(f"  1m bars: {int((~np.isnan(cl)).sum())} of {len(cl)}")
@@ -237,7 +263,10 @@ def main():
                        "btc_ref": float("nan"), "btc_px": float("nan")})
     log(f"  events: {sum(e['kind'] == 'down' for e in events)} down, {sum(e['kind'] == 'up' for e in events)} up, "
         f"{len(rnd)} random")
+    return events, theta, counts, n_cand
 
+
+def hourly(client, cfg, keep):
     log("4. hourly panel")
     panel_path = os.path.join(CACHE, "hourly_panel.npz")
     panel = None
@@ -260,10 +289,10 @@ def main():
         n_bars[s] = len(have)
         first_bar[s] = C.iso(panel["start_ms"] + have[0] * HOUR) if len(have) else ""
         last_bar[s] = C.iso(panel["start_ms"] + have[-1] * HOUR) if len(have) else ""
-    write_csv(os.path.join(OUT, "symbols.csv"), ["symbol", "base", "status", "excluded", "hourly_bars", "first_bar", "last_bar"],
-              [[r["symbol"], r["base"], r["status"], r["excluded"], n_bars.get(r["symbol"], ""),
-                first_bar.get(r["symbol"], ""), last_bar.get(r["symbol"], "")] for r in table])
+    return panel, digest, first_bar, last_bar, n_bars
 
+
+def universes(client, cfg, panel, digest, events, theta, counts, n_cand, table, limits, n_all, by_status, keep):
     log("5. point-in-time universes")
     dyn = {}
     ev_rows = []
@@ -330,7 +359,8 @@ def main():
         "candidate_minutes": n_cand, "symbols_in_exchange_info": n_all, "usdt_symbols": len(table),
         "usdt_by_status": by_status, "kept_by_name": len(keep), "rate_limits": limits,
         "panel_sha256": digest, "panel_shape": list(panel["close"].shape), "dynamic_peg_exclusions": sorted(dyn),
-        "spread_snapshot": spread_summary, "meta": C.run_meta(client)})
+        "spread_snapshot": spread_summary, "tokenized_equities_excluded": sorted(C.pegged_products()),
+        "meta": C.run_meta(client)})
     log("done", client.stats)
 
 

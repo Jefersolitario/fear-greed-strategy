@@ -42,6 +42,35 @@ WRAPPED_PEGGED = {
 DYNAMIC_PEG_SD = 8e-4    # hourly log-return standard deviation below this over 30 days: treated as pegged
 
 
+PEGGED_GROUP = "TRD_GRP_261"   # Binance permission group carried by every tokenized stock or ETF pair and by no coin
+
+
+def load_pegged_products() -> set[str]:
+    """Pairs that the exchange's own metadata marks as tokenized equities (census in out/s0, see s0_info.py).
+
+    They are pegged products, listed from June 2026, and stay out of the coin universe. Empty if no census.
+    """
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "out", "s0", "usdt_symbols_info.csv")
+    out: set[str] = set()
+    if os.path.exists(path):
+        import csv
+        with open(path, newline="") as f:
+            for r in csv.DictReader(f):
+                if PEGGED_GROUP in r.get("permissionSets", ""):
+                    out.add(r["symbol"])
+    return out
+
+
+_PEGGED: set[str] | None = None
+
+
+def pegged_products() -> set[str]:
+    global _PEGGED
+    if _PEGGED is None:
+        _PEGGED = load_pegged_products()
+    return _PEGGED
+
+
 def tier_of_rank(rank: int) -> int:
     return 1 if rank <= 10 else (2 if rank <= 30 else 3)
 
@@ -462,7 +491,7 @@ def rank_at(panel: dict, t_ms: int, keep_reason: dict[str, str] | None = None):
         s = syms[j]
         if not active[j] or qv30[j] <= 0:
             continue
-        if exclusion_reason(base_of(s), bases):
+        if exclusion_reason(base_of(s), bases) or s in pegged_products():
             continue
         if not np.isnan(sd[j]) and sd[j] < DYNAMIC_PEG_SD:
             if keep_reason is not None:

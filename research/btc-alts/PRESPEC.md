@@ -196,3 +196,13 @@ The owner's answer: run both, and keep them apart in the report.
 - Both: the 30 most liquid coins, the most recent 12 months of 5-minute data, top 20 of the 435 pairs, base
   rule, on time and one bar late. The number of trading windows each rests on is reported.
 - Trials for the deflated Sharpe ratio: hourly 16 + A 4 + B 4 = 24.
+
+## Addendum 4, 22 Nov 2026, after stage 1 (universes only), before any Part 1 or Part 2 result: tokenized equities
+
+Stage 1 showed that from June 2026 Binance lists tokenized stocks and ETFs as USDT pairs (NVDAB, SPYB, SOXLB
+and about 110 more), and that several sit inside the volume top 100 (six of the top 30 in November 2026).
+They are pegged products, not coins, and the brief excludes pegged tokens. They are identified from the
+exchange's own metadata, not from their names: every such pair carries the permission group `TRD_GRP_261`
+and no other pair does (census in `out/s0`, 113 of 113 against 0 of 396). They are removed at ranking, so
+the next coins move up; the Bitcoin events are unchanged (they use Bitcoin data only). This was decided on
+the composition of the universe alone, before any return of any other coin had been looked at.
