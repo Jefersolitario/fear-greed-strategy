@@ -1,0 +1,46 @@
+name: research-btc-alts-s0
+
+# Research only: one public exchangeInfo request, no API key. Census of pair attributes for the universe rules.
+on:
+  push:
+    branches: ["claude/research-btc-alts"]
+    paths:
+      - "research/btc-alts/s0_info.py"
+      - ".github/workflows/research-btc-alts-s0.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: research-btc-alts-s0
+  cancel-in-progress: true
+
+jobs:
+  run:
+    if: github.ref == 'refs/heads/claude/research-btc-alts'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install
+        run: pip install numpy==2.5.5 "requests>=2.31"
+      - name: Census
+        working-directory: research/btc-alts
+        run: python s0_info.py
+      - name: Commit compact outputs
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add research/btc-alts/out/s0 || true
+          if git diff --cached --quiet; then echo "nothing to commit"; exit 0; fi
+          git commit -m "research(btc-alts): census of USDT pair attributes" \
+                     -m "Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>
+          Claude-Session: https://claude.ai/code/session_01P1dahfAEk7SjXso6WjuRK2"
+          for i in 1 2 3 4 5; do
+            git pull --rebase origin claude/research-btc-alts && git push origin HEAD:claude/research-btc-alts && break
+            sleep $((i * 5))
+          done
