@@ -1,0 +1,127 @@
+{
+ "candidate_minutes": 31431,
+ "config": {
+  "end": 1795305600000,
+  "first_T": 1614643200000,
+  "formation_days": 60,
+  "hourly_start": 1609459200000,
+  "n_pairs": 20,
+  "n_random": 100,
+  "p1_start": 1672531200000,
+  "post_s": 3600,
+  "pre_s": 120,
+  "split_p1": 1735689600000,
+  "split_p2": 1704067200000,
+  "test": false,
+  "theta_grid": [
+   0.004,
+   0.005,
+   0.006,
+   0.0075,
+   0.01,
+   0.0125,
+   0.015
+  ],
+  "top_n": 100,
+  "trading_days": 30,
+  "weight_budget_per_min": 3000,
+  "workers": 8
+ },
+ "dynamic_peg_exclusions": [
+  "KGSTUSDT",
+  "RWUSDUSDT",
+  "UUSDT"
+ ],
+ "end_utc": "2026-11-22T00:00:00Z",
+ "event_counts": {
+  "0.004": 1564,
+  "0.005": 1039,
+  "0.006": 690,
+  "0.0075": 389,
+  "0.01": 165,
+  "0.0125": 104,
+  "0.015": 65
+ },
+ "kept_by_name": 704,
+ "meta": {
+  "api_stats": {
+   "bulk_calls": 3,
+   "bulk_status": {
+    "200": 3
+   },
+   "calls": 35715,
+   "max_used_weight_1m": 3008,
+   "retries": 0,
+   "status": {
+    "200": 35715
+   },
+   "weight": 71449
+  },
+  "git_sha": "a7f9bb6276ee9878dab1b2517e3286c73c33110c",
+  "numpy": "2.5.5",
+  "python": "3.13.18",
+  "refused": {},
+  "run_id": "45018381549",
+  "utc": "2026-11-22T12:03:58Z"
+ },
+ "n_events": {
+  "down": 104,
+  "random": 100,
+  "up": 101
+ },
+ "panel_sha256": "97f73ed9e88126a4ddaa549f83dc615b521512739d3ff0c6850bb858e65ac1a2",
+ "panel_shape": [
+  51624,
+  704
+ ],
+ "rate_limits": [
+  {
+   "interval": "MINUTE",
+   "intervalNum": 1,
+   "limit": 6000,
+   "rateLimitType": "REQUEST_WEIGHT"
+  },
+  {
+   "interval": "SECOND",
+   "intervalNum": 10,
+   "limit": 100,
+   "rateLimitType": "ORDERS"
+  },
+  {
+   "interval": "DAY",
+   "intervalNum": 1,
+   "limit": 200000,
+   "rateLimitType": "ORDERS"
+  },
+  {
+   "interval": "MINUTE",
+   "intervalNum": 5,
+   "limit": 300000,
+   "rateLimitType": "RAW_REQUESTS"
+  }
+ ],
+ "spread_snapshot": {
+  "tier1": {
+   "mean_full_spread_bps": 3.7642999999999995,
+   "median_full_spread_bps": 0.9135,
+   "n": 10
+  },
+  "tier2": {
+   "mean_full_spread_bps": 2.8444499999999997,
+   "median_full_spread_bps": 2.2045,
+   "n": 20
+  },
+  "tier3": {
+   "mean_full_spread_bps": 12.901957142857144,
+   "median_full_spread_bps": 7.8694999999999995,
+   "n": 70
+  }
+ },
+ "symbols_in_exchange_info": 3751,
+ "theta": 0.0125,
+ "usdt_by_status": {
+  "BREAK": 257,
+  "TRADING": 526
+ },
+ "usdt_symbols": 783
+}
